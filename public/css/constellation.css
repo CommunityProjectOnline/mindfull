@@ -1,0 +1,98 @@
+/* The Constellation - Grid workspace for floating Memory nodes (stars) */
+
+.constellation {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Memory Node - Floating card (star) on The Constellation */
+.memory-node {
+    position: absolute;
+    width: 320px;
+    background: linear-gradient(145deg, rgba(42, 42, 48, 0.95), rgba(31, 31, 36, 0.95));
+    border: 2px solid rgba(102, 126, 234, 0.4);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 40px rgba(102, 126, 234, 0.1);
+    cursor: move;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.memory-node:hover {
+    border-color: rgba(118, 75, 162, 0.6);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 60px rgba(102, 126, 234, 0.2);
+}
+
+.memory-node.dragging {
+    cursor: grabbing;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 80px rgba(102, 126, 234, 0.3);
+    border-color: rgba(118, 75, 162, 0.8);
+    z-index: 1000;
+}
+
+/* Memory Node Header */
+.memory-node-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.memory-node-title {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #e0e0e0;
+}
+
+.memory-node-shortcut {
+    background: rgba(255, 234, 167, 0.15);
+    color: #ffeaa7;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85em;
+    border: 1px solid rgba(255, 234, 167, 0.3);
+}
+
+/* Memory Node Category */
+.memory-node-category {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 5px 14px;
+    border-radius: 16px;
+    font-size: 0.8em;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+/* Memory Node Content */
+.memory-node-content {
+    color: #b0b0b0;
+    line-height: 1.6;
+    font-size: 0.95em;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+/* Custom scrollbar for content */
+.memory-node-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.memory-node-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.memory-node-content::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.4);
+    border-radius: 3px;
+}
+
+.memory-node-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.6);
+}

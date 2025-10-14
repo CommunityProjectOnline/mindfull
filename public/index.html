@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MindFull - Your Inner Space</title>
+        
+        <!-- Link to external CSS -->
+        <link rel="stylesheet" href="css/styles.css">
+        <link rel="stylesheet" href="css/constellation.css">
+        <link rel="stylesheet" href="css/mission-control.css">
+    </head>
+
+    <body>
+
+        <!-- MindFull Logo (Top Left) -->
+        <div class="logo-container">
+            <img src="assets/logo-constellation.svg" alt="MindFull Logo" class="logo">
+            <span class="logo-text">MindFull</span>
+        </div>
+
+        <!-- Mission Control Button (TODO Tracker) -->
+        <button id="missionControlBtn" class="mission-control-btn" title="Mission Control">
+            <svg class="rocket-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L4 14h8v8l8-12h-8V2z" fill="url(#rocketGradient)" stroke="rgba(102, 126, 234, 0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="14" r="1.5" fill="rgba(255, 234, 167, 0.8)"/>
+                <defs>
+                    <linearGradient id="rocketGradient" x1="12" y1="2" x2="12" y2="22" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="rgba(102, 126, 234, 0.8)"/>
+                        <stop offset="100%" stop-color="rgba(118, 75, 162, 0.8)"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </button>
+
+        <!-- Mission Control Panel (hidden by default) -->
+        <div id="missionControlPanel" class="mission-panel hidden">
+            <div class="mission-header">
+                <h2>🚀 Mission Control</h2>
+                <button id="closeMissionBtn" class="close-btn">×</button>
+            </div>
+            <div class="mission-content">
+                <p class="mission-note">📋 All TODOs and future ideas tracked in <code>ROADMAP.md</code></p>
+                <a href="ROADMAP.md" target="_blank" class="roadmap-link">Open Full Roadmap</a>
+            </div>
+        </div>
+
+        <!-- Inner Space - Grid workspace for floating Memories -->
+        <div id="constellation" class="constellation">
+
+            <!-- Sample Memory Card (draggable) -->
+            <div class="memory-node" id="memory-1" style="left: 400px; top: 200px;">
+                <div class="memory-node-header">
+                    <span class="memory-node-title">John 3:16</span>
+                    <span class="memory-node-shortcut">{{jn3:16}}</span>
+                </div>
+                <div class="memory-node-category">Scripture</div>
+                <div class="memory-node-content">
+                    For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- JavaScript for drag functionality -->
+        <script src="js/constellation.js"></script>
+
+    </body>
+</html>

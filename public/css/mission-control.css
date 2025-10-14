@@ -1,0 +1,162 @@
+/* Mission Control - TODO Tracker UI */
+
+/* Mission Control Button (top right corner) */
+.mission-control-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: rgba(42, 42, 48, 0.8);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    z-index: 10000;
+}
+
+.mission-control-btn:hover {
+    background: rgba(52, 52, 58, 0.9);
+    border-color: rgba(102, 126, 234, 0.6);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transform: scale(1.05);
+}
+
+.rocket-icon {
+    width: 28px;
+    height: 28px;
+    transition: transform 0.3s ease;
+}
+
+.mission-control-btn:hover .rocket-icon {
+    transform: translateY(-3px) rotate(-5deg);
+    filter: drop-shadow(0 2px 8px rgba(102, 126, 234, 0.6));
+}
+
+/* Mission Control Panel */
+.mission-panel {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    width: 400px;
+    max-height: 80vh;
+    background: rgba(30, 30, 35, 0.95);
+    border: 2px solid rgba(102, 126, 234, 0.4);
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(15px);
+    z-index: 9999;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.mission-panel.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-20px);
+}
+
+/* Mission Header */
+.mission-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+    background: linear-gradient(145deg, rgba(42, 42, 48, 0.8), rgba(31, 31, 36, 0.8));
+}
+
+.mission-header h2 {
+    color: #e0e0e0;
+    font-size: 1.3em;
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #b0b0b0;
+    font-size: 32px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    color: #ff6b6b;
+}
+
+/* Mission Content */
+.mission-content {
+    padding: 25px;
+    color: #b0b0b0;
+    overflow-y: auto;
+    max-height: calc(80vh - 80px);
+}
+
+.mission-note {
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.mission-note code {
+    background: rgba(102, 126, 234, 0.1);
+    color: #ffeaa7;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+.roadmap-link {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.roadmap-link:hover {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Custom scrollbar */
+.mission-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.mission-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.mission-content::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.4);
+    border-radius: 4px;
+}
+
+.mission-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.6);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mission-panel {
+        width: calc(100vw - 40px);
+        right: 20px;
+    }
+}

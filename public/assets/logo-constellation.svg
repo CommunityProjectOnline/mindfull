@@ -1,0 +1,88 @@
+<svg width="120" height="80" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- M Letter Constellation -->
+  <!-- Left vertical line of M -->
+  <line x1="10" y1="60" x2="10" y2="20" stroke="url(#lineGradient)" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Left diagonal of M -->
+  <line x1="10" y1="20" x2="25" y2="40" stroke="url(#lineGradient)" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Right diagonal of M -->
+  <line x1="25" y1="40" x2="40" y2="20" stroke="url(#lineGradient)" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Right vertical line of M -->
+  <line x1="40" y1="20" x2="40" y2="60" stroke="url(#lineGradient)" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- F Letter Constellation -->
+  <!-- Vertical line of F -->
+  <line x1="70" y1="60" x2="70" y2="20" stroke="url(#lineGradient)" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Top horizontal of F -->
+  <line x1="70" y1="20" x2="105" y2="20" stroke="url(#lineGradient)" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Middle horizontal of F -->
+  <line x1="70" y1="40" x2="95" y2="40" stroke="url(#lineGradient)" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Stars (connection points) for M -->
+  <circle cx="10" cy="60" r="3" fill="#667eea">
+    <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="10" cy="20" r="3" fill="#667eea">
+    <animate attributeName="opacity" values="0.8;1;0.8" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="25" cy="40" r="3" fill="#764ba2">
+    <animate attributeName="opacity" values="0.7;1;0.7" dur="2.8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="40" cy="20" r="3" fill="#667eea">
+    <animate attributeName="opacity" values="0.8;1;0.8" dur="3.2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="40" cy="60" r="3" fill="#667eea">
+    <animate attributeName="opacity" values="0.6;1;0.6" dur="2.7s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Stars (connection points) for F -->
+  <circle cx="70" cy="60" r="3" fill="#667eea">
+    <animate attributeName="opacity" values="0.6;1;0.6" dur="3.1s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="70" cy="20" r="3" fill="#667eea">
+    <animate attributeName="opacity" values="0.8;1;0.8" dur="2.6s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="105" cy="20" r="3" fill="#764ba2">
+    <animate attributeName="opacity" values="0.7;1;0.7" dur="2.9s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="70" cy="40" r="3" fill="#667eea">
+    <animate attributeName="opacity" values="0.7;1;0.7" dur="3.3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="95" cy="40" r="3" fill="#764ba2">
+    <animate attributeName="opacity" values="0.8;1;0.8" dur="2.4s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Glow effects on stars -->
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:rgb(102, 126, 234);stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:rgb(118, 75, 162);stop-opacity:0.8" />
+    </linearGradient>
+  </defs>
+
+  <!-- Apply glow to all circles -->
+  <g filter="url(#glow)">
+    <circle cx="10" cy="60" r="2" fill="#667eea" opacity="0.5"/>
+    <circle cx="10" cy="20" r="2" fill="#667eea" opacity="0.5"/>
+    <circle cx="25" cy="40" r="2" fill="#764ba2" opacity="0.5"/>
+    <circle cx="40" cy="20" r="2" fill="#667eea" opacity="0.5"/>
+    <circle cx="40" cy="60" r="2" fill="#667eea" opacity="0.5"/>
+    <circle cx="70" cy="60" r="2" fill="#667eea" opacity="0.5"/>
+    <circle cx="70" cy="20" r="2" fill="#667eea" opacity="0.5"/>
+    <circle cx="105" cy="20" r="2" fill="#764ba2" opacity="0.5"/>
+    <circle cx="70" cy="40" r="2" fill="#667eea" opacity="0.5"/>
+    <circle cx="95" cy="40" r="2" fill="#764ba2" opacity="0.5"/>
+  </g>
+</svg>
