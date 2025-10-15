@@ -4,52 +4,187 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>MindFull - Your Inner Space</title>
-        
+
+        <!-- Favicon -->
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+
         <!-- Link to external CSS -->
         <link rel="stylesheet" href="css/styles.css">
         <link rel="stylesheet" href="css/constellation.css">
         <link rel="stylesheet" href="css/mission-control.css">
+        <link rel="stylesheet" href="css/sidebar.css">
+        <link rel="stylesheet" href="css/astronaut.css">
+        <link rel="stylesheet" href="css/settings.css">
     </head>
 
     <body>
 
-        <!-- MindFull Logo (Top Left) -->
-        <div class="logo-container">
-            <img src="assets/logo-constellation.svg" alt="MindFull Logo" class="logo">
-            <span class="logo-text">MindFull</span>
+        <!-- Collapsible Sidebar Navigation -->
+        <div id="sidebar" class="sidebar">
+            <!-- Sidebar Header with Logo -->
+            <div class="sidebar-header">
+                <img src="assets/logo-constellation.svg" alt="MindFull Logo" class="sidebar-logo">
+                <span class="sidebar-title">MindFull</span>
+            </div>
+
+            <!-- Sidebar Navigation Items -->
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" id="navInnerSpace" title="Inner Space">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+                        <!-- Galaxy spiral icon -->
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+                        <path d="M12 2 Q16 6 16 12 Q16 18 12 22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        <path d="M22 12 Q18 8 12 8 Q6 8 2 12" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                        <circle cx="16" cy="8" r="1" fill="currentColor"/>
+                        <circle cx="8" cy="16" r="1" fill="currentColor"/>
+                        <circle cx="16" cy="16" r="0.5" fill="currentColor"/>
+                        <circle cx="8" cy="8" r="0.5" fill="currentColor"/>
+                    </svg>
+                    <span class="nav-text">Inner Space</span>
+                </a>
+
+                <a href="#" class="nav-item" id="navMemories" title="Memories">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+                        <!-- Store/Book icon -->
+                        <path d="M4 6h16M4 6v12a2 2 0 002 2h12a2 2 0 002-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" stroke-width="2"/>
+                        <line x1="12" y1="11" x2="12" y2="17" stroke="currentColor" stroke-width="2"/>
+                        <line x1="9" y1="14" x2="15" y2="14" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="nav-text">Memories</span>
+                </a>
+
+                <a href="#" class="nav-item" id="navTimeline" title="Timeline">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="nav-text">Timeline</span>
+                </a>
+
+                <a href="#" class="nav-item" id="navConstellations" title="Constellations">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+                        <!-- Constellation pattern icon -->
+                        <circle cx="6" cy="6" r="1.5" fill="currentColor"/>
+                        <circle cx="18" cy="6" r="1.5" fill="currentColor"/>
+                        <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+                        <circle cx="6" cy="18" r="1.5" fill="currentColor"/>
+                        <circle cx="18" cy="18" r="1.5" fill="currentColor"/>
+                        <line x1="6" y1="6" x2="12" y2="12" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="18" y1="6" x2="12" y2="12" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="12" y1="12" x2="6" y2="18" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="12" y1="12" x2="18" y2="18" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    <span class="nav-text">Constellations</span>
+                </a>
+
+                <a href="#" class="nav-item" id="navForgotten" title="Forgotten Memories">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-dasharray="2,2"/>
+                        <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+                    </svg>
+                    <span class="nav-text">Forgotten Memories</span>
+                </a>
+
+                <div class="nav-divider"></div>
+
+                <a href="#" class="nav-item" id="navMissionControl" title="Mission Control">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L4 14h8v8l8-12h-8V2z" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="nav-text">Mission Control</span>
+                </a>
+
+                <a href="#" class="nav-item" id="navSettings" title="Settings">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 1v6m0 6v10M1 12h6m6 0h10" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+                    </svg>
+                    <span class="nav-text">Settings</span>
+                </a>
+            </nav>
         </div>
 
-        <!-- Mission Control Button (TODO Tracker) -->
-        <button id="missionControlBtn" class="mission-control-btn" title="Mission Control">
-            <svg class="rocket-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L4 14h8v8l8-12h-8V2z" fill="url(#rocketGradient)" stroke="rgba(102, 126, 234, 0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="12" cy="14" r="1.5" fill="rgba(255, 234, 167, 0.8)"/>
-                <defs>
-                    <linearGradient id="rocketGradient" x1="12" y1="2" x2="12" y2="22" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="rgba(102, 126, 234, 0.8)"/>
-                        <stop offset="100%" stop-color="rgba(118, 75, 162, 0.8)"/>
-                    </linearGradient>
-                </defs>
-            </svg>
-        </button>
+        <!-- Astronaut Mascot -->
+        <div id="astronaut" class="astronaut-container">
+            <img src="assets/astronaut_chibi2.png" alt="Astronaut Mascot" class="astronaut-mascot">
+        </div>
 
-        <!-- Mission Control Panel (hidden by default) -->
-        <div id="missionControlPanel" class="mission-panel hidden">
-            <div class="mission-header">
-                <h2>🚀 Mission Control</h2>
-                <button id="closeMissionBtn" class="close-btn">×</button>
+        <!-- Settings Panel -->
+        <div id="settingsPanel" class="settings-panel hidden">
+            <div class="settings-header">
+                <h2>Settings</h2>
+                <button id="closeSettings" class="close-btn">×</button>
             </div>
-            <div class="mission-content">
-                <p class="mission-note">📋 All TODOs and future ideas tracked in <code>ROADMAP.md</code></p>
-                <a href="ROADMAP.md" target="_blank" class="roadmap-link">Open Full Roadmap</a>
+            <div class="settings-content">
+                <div class="settings-section">
+                    <h3>Audio Controls</h3>
+                    <div class="audio-controls">
+                        <div class="control-row">
+                            <label>Volume</label>
+                            <input type="range" id="volumeSlider" min="0" max="100" value="30">
+                            <span id="volumeValue">30%</span>
+                        </div>
+                        <div class="control-row">
+                            <label>Now Playing</label>
+                            <div class="track-info">
+                                <span id="currentTrackDisplay">No track playing</span>
+                            </div>
+                        </div>
+                        <div class="control-row">
+                            <label>Track Controls</label>
+                            <div class="track-controls">
+                                <button id="prevTrack" class="track-btn">⏮ Previous</button>
+                                <button id="nextTrack" class="track-btn">Next ⏭</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Inner Space - Grid workspace for floating Memories -->
         <div id="constellation" class="constellation">
 
-            <!-- Sample Memory Card (draggable) -->
-            <div class="memory-node" id="memory-1" style="left: 400px; top: 200px;">
+            <!-- Add Memory Button -->
+            <button id="addMemoryBtn" class="add-memory-btn">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/>
+                    <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>Add Memory</span>
+            </button>
+
+            <!-- SVG Layer for Neural Pathway connections -->
+            <svg id="connectionLayer" class="connection-layer">
+                <defs>
+                    <!-- Pulsing gradient definition -->
+                    <linearGradient id="pulseGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="rgba(102, 126, 234, 0)" />
+                        <stop offset="20%" stop-color="rgba(102, 126, 234, 0.4)" />
+                        <stop offset="40%" stop-color="rgba(102, 126, 234, 0.8)" />
+                        <stop offset="50%" stop-color="rgba(255, 255, 255, 1)" />
+                        <stop offset="60%" stop-color="rgba(102, 126, 234, 0.8)" />
+                        <stop offset="80%" stop-color="rgba(102, 126, 234, 0.4)" />
+                        <stop offset="100%" stop-color="rgba(102, 126, 234, 0)" />
+
+                        <!-- Animate the gradient along the line -->
+                        <animate attributeName="x1" values="-50%;150%" dur="2s" repeatCount="indefinite" />
+                        <animate attributeName="x2" values="50%;250%" dur="2s" repeatCount="indefinite" />
+                    </linearGradient>
+                </defs>
+            </svg>
+
+            <!-- Sample Memory Card 1 (draggable) -->
+            <div class="memory-node" id="memory-1" data-memory-id="1" style="left: 300px; top: 200px;">
+                <!-- Connection Ports -->
+                <div class="connection-port port-top" data-port="top"></div>
+                <div class="connection-port port-right" data-port="right"></div>
+                <div class="connection-port port-bottom" data-port="bottom"></div>
+                <div class="connection-port port-left" data-port="left"></div>
+
                 <div class="memory-node-header">
                     <span class="memory-node-title">John 3:16</span>
                     <span class="memory-node-shortcut">{{jn3:16}}</span>
@@ -60,9 +195,36 @@
                 </div>
             </div>
 
+            <!-- Sample Memory Card 2 (draggable) -->
+            <div class="memory-node" id="memory-2" data-memory-id="2" style="left: 700px; top: 350px;">
+                <!-- Connection Ports -->
+                <div class="connection-port port-top" data-port="top"></div>
+                <div class="connection-port port-right" data-port="right"></div>
+                <div class="connection-port port-bottom" data-port="bottom"></div>
+                <div class="connection-port port-left" data-port="left"></div>
+
+                <div class="memory-node-header">
+                    <span class="memory-node-title">Love Definition</span>
+                    <span class="memory-node-shortcut">{{love-def}}</span>
+                </div>
+                <div class="memory-node-category">Note</div>
+                <div class="memory-node-content">
+                    Love is patient, love is kind. It does not envy, it does not boast, it is not proud.
+                </div>
+            </div>
+
         </div>
 
-        <!-- JavaScript for drag functionality -->
+        <!-- Audio Mute Button -->
+        <button id="muteBtn" class="mute-btn" title="Mute">🔊</button>
+
+        <!-- Now Playing Display -->
+        <div id="nowPlaying" class="now-playing">
+            <span id="trackName"></span>
+        </div>
+
+        <!-- JavaScript -->
+        <script src="js/audio.js"></script>
         <script src="js/constellation.js"></script>
 
     </body>

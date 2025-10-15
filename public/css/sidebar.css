@@ -1,0 +1,132 @@
+/* Collapsible Sidebar Navigation */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100vh;
+    background: linear-gradient(180deg, rgba(20, 20, 26, 0.98) 0%, rgba(15, 15, 20, 0.98) 100%);
+    backdrop-filter: blur(10px);
+    border-right: 2px solid rgba(102, 126, 234, 0.2);
+    z-index: 10000;
+    transition: transform 0.3s ease;
+    overflow-y: hidden;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar.collapsed {
+    transform: translateX(-200px);
+}
+
+/* Sidebar Header with Logo */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 24px 20px;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.sidebar-logo {
+    width: 50px;
+    height: 35px;
+}
+
+.sidebar-title {
+    font-size: 1.4em;
+    font-weight: 600;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+
+/* Sidebar Navigation */
+.sidebar-nav {
+    padding: 20px 0;
+    margin-top: 10px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 24px;
+    color: #b0b0b0;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+}
+
+.nav-item:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #e0e0e0;
+    border-left-color: rgba(102, 126, 234, 0.4);
+}
+
+.nav-item.active {
+    background: rgba(102, 126, 234, 0.15);
+    color: #ffffff;
+    border-left-color: #667eea;
+}
+
+.nav-icon {
+    width: 24px;
+    height: 24px;
+    color: currentColor;
+    flex-shrink: 0;
+}
+
+.nav-text {
+    font-size: 1em;
+    font-weight: 500;
+}
+
+/* Navigation Divider */
+.nav-divider {
+    height: 1px;
+    background: rgba(102, 126, 234, 0.15);
+    margin: 16px 24px;
+}
+
+/* Custom Scrollbar for Sidebar */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.4);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.6);
+}
+
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        transform: translateX(-100%);
+    }
+
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+
+    .sidebar:not(.collapsed) {
+        transform: translateX(0);
+    }
+
+    body:not(.sidebar-closed) .logo-container {
+        left: 20px;
+    }
+}

@@ -1,0 +1,91 @@
+<svg width="100" height="110" viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Chibi Astronaut - Compact & Chubby Style -->
+
+    <!-- Shadow -->
+    <ellipse cx="50" cy="105" rx="25" ry="4" fill="rgba(0, 0, 0, 0.2)"/>
+
+    <!-- Legs (short and stubby) -->
+    <rect x="38" y="75" width="10" height="12" rx="5" fill="#E8E8F0"/>
+    <rect x="52" y="75" width="10" height="12" rx="5" fill="#E8E8F0"/>
+
+    <!-- Boots (rounded) -->
+    <ellipse cx="43" cy="87" rx="7" ry="5" fill="#667eea"/>
+    <ellipse cx="57" cy="87" rx="7" ry="5" fill="#667eea"/>
+
+    <!-- Body (round and chubby) -->
+    <ellipse cx="50" cy="60" rx="20" ry="22" fill="#FFFFFF"/>
+    <ellipse cx="50" cy="60" rx="18" ry="20" fill="#F5F5FA"/>
+
+    <!-- Chest panel/control box -->
+    <rect x="42" y="58" width="16" height="12" rx="2" fill="#667eea" opacity="0.3"/>
+    <rect x="44" y="60" width="5" height="3" rx="1" fill="#667eea"/>
+    <rect x="51" y="60" width="5" height="3" rx="1" fill="#667eea"/>
+    <circle cx="46.5" cy="66" r="1.5" fill="#ffeaa7"/>
+    <circle cx="53.5" cy="66" r="1.5" fill="#ffeaa7"/>
+
+    <!-- Arms (very stubby and rounded) -->
+    <ellipse cx="30" cy="60" rx="6" ry="11" fill="#F5F5FA" transform="rotate(-15 30 60)"/>
+    <ellipse cx="70" cy="60" rx="6" ry="11" fill="#F5F5FA" transform="rotate(15 70 60)"/>
+
+    <!-- Gloves (rounded) -->
+    <circle cx="28" cy="68" r="5" fill="#667eea"/>
+    <circle cx="72" cy="68" r="5" fill="#667eea"/>
+
+    <!-- Backpack (compact) -->
+    <rect x="43" y="48" width="14" height="12" rx="2" fill="#764ba2" opacity="0.7"/>
+    <circle cx="47" cy="52" r="1.5" fill="#ffeaa7" opacity="0.8"/>
+    <circle cx="53" cy="52" r="1.5" fill="#ffeaa7" opacity="0.8"/>
+
+    <!-- Helmet collar/ring -->
+    <ellipse cx="50" cy="50" rx="24" ry="6" fill="#667eea"/>
+    <ellipse cx="50" cy="48" rx="22" ry="5" fill="#7b8ff7"/>
+
+    <!-- Helmet (BIG and round) -->
+    <circle cx="50" cy="30" r="28" fill="url(#helmetGradient)" opacity="0.15"/>
+    <circle cx="50" cy="30" r="26" fill="rgba(102, 126, 234, 0.1)"/>
+
+    <!-- Helmet glass outline -->
+    <circle cx="50" cy="30" r="28" stroke="rgba(102, 126, 234, 0.3)" stroke-width="2" fill="none"/>
+
+    <!-- Visor (large dark oval) -->
+    <ellipse cx="50" cy="30" rx="20" ry="18" fill="url(#visorGradient)"/>
+
+    <!-- Visor shine/reflection -->
+    <ellipse cx="42" cy="24" rx="8" ry="6" fill="rgba(255, 255, 255, 0.4)"/>
+    <circle cx="58" cy="28" r="3" fill="rgba(255, 255, 255, 0.3)"/>
+
+    <!-- Stars in visor -->
+    <circle cx="48" cy="32" r="1.5" fill="#ffeaa7">
+        <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="55" cy="28" r="1" fill="#ffeaa7">
+        <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="45" cy="36" r="0.8" fill="#ffeaa7">
+        <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- Side communication device -->
+    <circle cx="75" cy="30" r="4" fill="#D0D0E0" stroke="#667eea" stroke-width="1.5"/>
+    <circle cx="75" cy="30" r="2" fill="#667eea" opacity="0.5"/>
+
+    <!-- Antenna on top -->
+    <line x1="50" y1="2" x2="50" y2="8" stroke="#667eea" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="50" cy="2" r="2.5" fill="#ffeaa7">
+        <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- Gradients -->
+    <defs>
+        <radialGradient id="helmetGradient">
+            <stop offset="0%" stop-color="rgba(200, 210, 255, 0.5)"/>
+            <stop offset="100%" stop-color="rgba(102, 126, 234, 0.2)"/>
+        </radialGradient>
+
+        <linearGradient id="visorGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#1a1a2e"/>
+            <stop offset="50%" stop-color="#0a0a15"/>
+            <stop offset="100%" stop-color="#1a1a2e"/>
+        </linearGradient>
+    </defs>
+</svg>
