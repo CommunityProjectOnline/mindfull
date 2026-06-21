@@ -6,27 +6,39 @@
         <title>MindFull - Your Inner Space</title>
 
         <!-- Favicon -->
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        <link rel="icon" href="./favicon.svg" type="image/svg+xml">
 
         <!-- Link to external CSS -->
-        <link rel="stylesheet" href="css/styles.css">
-        <link rel="stylesheet" href="css/constellation.css">
-        <link rel="stylesheet" href="css/mission-control.css">
+        <link rel="stylesheet" href="css/base.css">
+        <link rel="stylesheet" href="css/navbar.css">
         <link rel="stylesheet" href="css/sidebar.css">
+        <link rel="stylesheet" href="css/constellation.css">
+        <link rel="stylesheet" href="css/modal.css">
+        <link rel="stylesheet" href="css/audio.css">
         <link rel="stylesheet" href="css/astronaut.css">
         <link rel="stylesheet" href="css/settings.css">
     </head>
 
     <body>
 
+        <!-- Top Navbar -->
+        <nav id="topNavbar" class="top-navbar">
+            <div class="navbar-brand">
+                <img src="assets/logo-constellation.svg" alt="MindFull Logo" class="navbar-logo">
+                <span class="navbar-title">MindFull</span>
+            </div>
+            <button id="addThoughtBtn" class="add-thought-btn-navbar">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/>
+                    <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>Add Thought</span>
+            </button>
+        </nav>
+
         <!-- Collapsible Sidebar Navigation -->
         <div id="sidebar" class="sidebar">
-            <!-- Sidebar Header with Logo -->
-            <div class="sidebar-header">
-                <img src="assets/logo-constellation.svg" alt="MindFull Logo" class="sidebar-logo">
-                <span class="sidebar-title">MindFull</span>
-            </div>
-
             <!-- Sidebar Navigation Items -->
             <nav class="sidebar-nav">
                 <a href="#" class="nav-item active" id="navInnerSpace" title="Inner Space">
@@ -85,16 +97,10 @@
                     </svg>
                     <span class="nav-text">Forgotten Memories</span>
                 </a>
+            </nav>
 
-                <div class="nav-divider"></div>
-
-                <a href="#" class="nav-item" id="navMissionControl" title="Mission Control">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
-                        <path d="M12 2L4 14h8v8l8-12h-8V2z" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    <span class="nav-text">Mission Control</span>
-                </a>
-
+            <!-- Settings at bottom -->
+            <nav class="sidebar-nav-bottom">
                 <a href="#" class="nav-item" id="navSettings" title="Settings">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
                         <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
@@ -104,6 +110,49 @@
                     <span class="nav-text">Settings</span>
                 </a>
             </nav>
+        </div>
+
+
+        <!-- Add / Edit Thought Modal -->
+        <div id="addThoughtModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="thoughtModalTitle">✨ Create New Thought</h2>
+                    <button id="closeThoughtModal" class="close-btn">×</button>
+                </div>
+                <form id="addThoughtForm" class="thought-form">
+                    <div class="form-group">
+                        <label for="thoughtTitle">Title</label>
+                        <input type="text" id="thoughtTitle" placeholder="e.g., John 3:16" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="thoughtCategory">Category</label>
+                        <select id="thoughtCategory" required>
+                            <option value="">Select a category...</option>
+                            <option value="Scripture">📖 Scripture</option>
+                            <option value="Note">📝 Note</option>
+                            <option value="Prayer">🙏 Prayer</option>
+                            <option value="Recipe">🍳 Recipe</option>
+                            <option value="Quote">💭 Quote</option>
+                            <option value="Idea">💡 Idea</option>
+                            <option value="Goal">🎯 Goal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="thoughtShortcut">Shortcut</label>
+                        <input type="text" id="thoughtShortcut" placeholder="e.g., jn3:16">
+                        <small>Optional. A unique handle to reference this Thought, e.g. {{jn3:16}}</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="thoughtContent">Content</label>
+                        <textarea id="thoughtContent" rows="6" placeholder="Write your Thought here..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancelThoughtBtn" class="btn-secondary">Cancel</button>
+                        <button type="submit" id="thoughtSubmitBtn" class="btn-primary">Create Thought</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <!-- Astronaut Mascot -->
@@ -147,17 +196,7 @@
         <!-- Inner Space - Grid workspace for floating Memories -->
         <div id="constellation" class="constellation">
 
-            <!-- Add Memory Button -->
-            <button id="addMemoryBtn" class="add-memory-btn">
-                <svg viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                    <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/>
-                    <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                <span>Add Memory</span>
-            </button>
-
-            <!-- SVG Layer for Neural Pathway connections -->
+            <!-- SVG Layer for String connections -->
             <svg id="connectionLayer" class="connection-layer">
                 <defs>
                     <!-- Pulsing gradient definition -->
@@ -177,41 +216,7 @@
                 </defs>
             </svg>
 
-            <!-- Sample Memory Card 1 (draggable) -->
-            <div class="memory-node" id="memory-1" data-memory-id="1" style="left: 300px; top: 200px;">
-                <!-- Connection Ports -->
-                <div class="connection-port port-top" data-port="top"></div>
-                <div class="connection-port port-right" data-port="right"></div>
-                <div class="connection-port port-bottom" data-port="bottom"></div>
-                <div class="connection-port port-left" data-port="left"></div>
-
-                <div class="memory-node-header">
-                    <span class="memory-node-title">John 3:16</span>
-                    <span class="memory-node-shortcut">{{jn3:16}}</span>
-                </div>
-                <div class="memory-node-category">Scripture</div>
-                <div class="memory-node-content">
-                    For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.
-                </div>
-            </div>
-
-            <!-- Sample Memory Card 2 (draggable) -->
-            <div class="memory-node" id="memory-2" data-memory-id="2" style="left: 700px; top: 350px;">
-                <!-- Connection Ports -->
-                <div class="connection-port port-top" data-port="top"></div>
-                <div class="connection-port port-right" data-port="right"></div>
-                <div class="connection-port port-bottom" data-port="bottom"></div>
-                <div class="connection-port port-left" data-port="left"></div>
-
-                <div class="memory-node-header">
-                    <span class="memory-node-title">Love Definition</span>
-                    <span class="memory-node-shortcut">{{love-def}}</span>
-                </div>
-                <div class="memory-node-category">Note</div>
-                <div class="memory-node-content">
-                    Love is patient, love is kind. It does not envy, it does not boast, it is not proud.
-                </div>
-            </div>
+            <!-- Thought nodes are rendered here from the database by thought-manager.js -->
 
         </div>
 
@@ -224,8 +229,33 @@
         </div>
 
         <!-- JavaScript -->
+        <!-- Configuration -->
+        <script src="js/config.js"></script>
+
+        <!-- API & Audio -->
+        <script src="js/api.js"></script>
         <script src="js/audio.js"></script>
-        <script src="js/constellation.js"></script>
+
+        <!-- State Management -->
+        <script src="js/state/app-state.js"></script>
+
+        <!-- Canvas Modules -->
+        <script src="js/canvas/panning.js"></script>
+        <script src="js/canvas/dragging.js"></script>
+
+        <!-- Connection Modules -->
+        <script src="js/connections/connection-manager.js"></script>
+        <script src="js/connections/connection-animator.js"></script>
+
+        <!-- UI Modules -->
+        <script src="js/ui/astronaut-controller.js"></script>
+        <script src="js/ui/navigation.js"></script>
+
+        <!-- Thought Management -->
+        <script src="js/thought-manager.js"></script>
+
+        <!-- Application Initialization (loads last) -->
+        <script src="js/app-init.js"></script>
 
     </body>
 </html>

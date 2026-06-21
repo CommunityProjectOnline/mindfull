@@ -1,23 +1,27 @@
 // Main server file - Keep it clean!
 
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Database: opening the connection applies the schema; seed adds the Big Bang Thoughts if empty.
+require('./db/connection');
+require('./db/seed')();
+
 // Import routes
-const memoriesRouter = require('./routes/memories');
+const thoughtsRouter = require('./routes/thoughts');
 
 // Middleware
+app.use(cors()); // Allow the frontend to call the API even when served from file:// during development
 app.use(express.json());
 app.use(express.static('public'));
 
 // Routes
-app.use('/api/memories', memoriesRouter);
+app.use('/api/thoughts', thoughtsRouter);
 
-// Root endpoint
-app.get('/', (req, res) => {
-  res.send('MindFull API - Fill your mind with stars');
-});
+// Root endpoint - express.static serves index.html automatically
+// No need for explicit root route since public folder contains index.html
 
 // Start server
 app.listen(PORT, () => {

@@ -68,7 +68,7 @@ n**Name Play:** MindFull = Be mindful + Your mind is FULL of knowledge
 
 ---
 
-## 🔗 Phase 3: Neural Pathways (Connections)
+## 🔗 Phase 3: Strings (Connections)
 
 ### Connection System
 - [ ] Draw lines between Memory nodes
@@ -150,7 +150,7 @@ n**Name Play:** MindFull = Be mindful + Your mind is FULL of knowledge
 ### Statistics Dashboard
 - [ ] Total Memories count
 - [ ] Total Constellations count
-- [ ] Total Neural Pathways count
+- [ ] Total Strings count
 - [ ] Lonely stars count
 - [ ] Most connected Memory
 - [ ] Most active Constellation

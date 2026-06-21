@@ -1,6 +1,12 @@
 # Dependencies
 node_modules/
 
+# Database (SQLite, WAL/SHM sidecar files)
+data/
+*.db
+*.db-wal
+*.db-shm
+
 # Environment variables
 .env
 .env.local

@@ -7,14 +7,19 @@
         "start": "node src/index.js",
         "dev": "nodemon src/index.js"
     },
-
-    "keywords": ["journal", "bible-study", "notes", "memories"],
+    "keywords": [
+        "journal",
+        "bible-study",
+        "notes",
+        "memories"
+    ],
     "author": "CommunityProjectOnline",
     "license": "ISC",
     "dependencies": {
+        "better-sqlite3": "^11.8.0",
+        "cors": "^2.8.5",
         "express": "4.18.2"
     },
-
     "devDependencies": {
         "nodemon": "3.0.1"
     }

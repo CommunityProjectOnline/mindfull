@@ -1,14 +1,29 @@
-/* The Constellation - Grid workspace for floating Memory nodes (stars) */
+/* The Constellation - Grid workspace for floating Thought nodes (stars) */
 
 .constellation {
     width: 100vw;
     height: 100vh;
     position: relative;
     overflow: hidden;
+    cursor: default;
+    user-select: none;
+    /* Infinite repeating grid background */
+    background-color: #010103;
+    background-image:
+        radial-gradient(ellipse 800px 800px at 50% 50%, rgba(80, 80, 90, 0.08) 0%, transparent 100%),
+        linear-gradient(90deg, rgba(100, 100, 120, 0.12) 1px, transparent 1px),
+        linear-gradient(rgba(100, 100, 120, 0.12) 1px, transparent 1px);
+    background-size: 100% 100%, 100px 100px, 100px 100px;
+    background-position: center, 0 0, 0 0;
+    background-repeat: no-repeat, repeat, repeat;
 }
 
-/* Memory Node - Floating card (star) on The Constellation */
-.memory-node {
+.constellation.panning {
+    cursor: grabbing !important;
+}
+
+/* Thought Node - Floating card (star) in Inner Space */
+.thought-node {
     position: absolute;
     width: 320px;
     background: linear-gradient(145deg, rgba(42, 42, 48, 0.95), rgba(31, 31, 36, 0.95));
@@ -21,44 +36,84 @@
     backdrop-filter: blur(10px);
 }
 
-.memory-node:hover {
+.thought-node:hover {
     border-color: rgba(118, 75, 162, 0.6);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 60px rgba(102, 126, 234, 0.2);
 }
 
-.memory-node.dragging {
+.thought-node.dragging {
     cursor: grabbing;
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 80px rgba(102, 126, 234, 0.3);
     border-color: rgba(118, 75, 162, 0.8);
     z-index: 1000;
 }
 
-/* Memory Node Header */
-.memory-node-header {
+/* Thought Node Header */
+.thought-node-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.thought-node-title {
+    font-size: 1.4em;
+    font-weight: 600;
+    color: #e0e0e0;
+    display: block;
+}
+
+/* Header actions (edit / delete), revealed on hover */
+.thought-node-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    flex-shrink: 0;
+}
+
+.thought-node:hover .thought-node-actions {
+    opacity: 1;
+}
+
+.thought-action-btn {
+    background: rgba(102, 126, 234, 0.12);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    color: #b0b0b0;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95em;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.thought-action-btn:hover {
+    color: #fff;
+    background: rgba(102, 126, 234, 0.3);
+    border-color: rgba(118, 75, 162, 0.7);
+}
+
+.thought-action-btn.delete:hover {
+    background: rgba(234, 102, 102, 0.3);
+    border-color: rgba(234, 102, 102, 0.7);
+}
+
+/* Thought Node Meta Row (Category + Shortcut) */
+.thought-node-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
+    gap: 8px;
 }
 
-.memory-node-title {
-    font-size: 1.3em;
-    font-weight: 600;
-    color: #e0e0e0;
-}
-
-.memory-node-shortcut {
-    background: rgba(255, 234, 167, 0.15);
-    color: #ffeaa7;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-family: 'Courier New', monospace;
-    font-size: 0.85em;
-    border: 1px solid rgba(255, 234, 167, 0.3);
-}
-
-/* Memory Node Category */
-.memory-node-category {
+.thought-node-category {
     display: inline-block;
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
@@ -66,11 +121,22 @@
     border-radius: 16px;
     font-size: 0.8em;
     font-weight: 500;
-    margin-bottom: 12px;
+    flex-shrink: 0;
 }
 
-/* Memory Node Content */
-.memory-node-content {
+.thought-node-shortcut {
+    background: rgba(255, 234, 167, 0.15);
+    color: #ffeaa7;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85em;
+    border: 1px solid rgba(255, 234, 167, 0.3);
+    flex-shrink: 0;
+}
+
+/* Thought Node Content */
+.thought-node-content {
     color: #b0b0b0;
     line-height: 1.6;
     font-size: 0.95em;
@@ -79,62 +145,24 @@
 }
 
 /* Custom scrollbar for content */
-.memory-node-content::-webkit-scrollbar {
+.thought-node-content::-webkit-scrollbar {
     width: 6px;
 }
 
-.memory-node-content::-webkit-scrollbar-track {
+.thought-node-content::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.2);
     border-radius: 3px;
 }
 
-.memory-node-content::-webkit-scrollbar-thumb {
+.thought-node-content::-webkit-scrollbar-thumb {
     background: rgba(102, 126, 234, 0.4);
     border-radius: 3px;
 }
 
-.memory-node-content::-webkit-scrollbar-thumb:hover {
+.thought-node-content::-webkit-scrollbar-thumb:hover {
     background: rgba(102, 126, 234, 0.6);
 }
 
-/* Add Memory Button */
-.add-memory-btn {
-    position: fixed;
-    top: 30px;
-    right: 30px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 24px;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
-    border: 2px solid rgba(102, 126, 234, 0.6);
-    border-radius: 12px;
-    color: #ffffff;
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 9999;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.add-memory-btn:hover {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 1), rgba(118, 75, 162, 1));
-    border-color: rgba(102, 126, 234, 0.8);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-    transform: translateY(-2px);
-}
-
-.add-memory-btn:active {
-    transform: translateY(0);
-}
-
-.add-memory-btn svg {
-    width: 24px;
-    height: 24px;
-    color: currentColor;
-}
 
 /* SVG Connection Layer */
 .connection-layer {
@@ -147,16 +175,16 @@
     z-index: 1;
 }
 
-/* Neural Pathway line (static glow) */
-.neural-pathway {
+/* String line (static glow) */
+.string {
     stroke: rgba(102, 126, 234, 0.3);
     stroke-width: 2;
     fill: none;
     filter: drop-shadow(0 0 4px rgba(102, 126, 234, 0.5));
 }
 
-/* When Memory is selected for connection */
-.memory-node.selected {
+/* When a Thought is selected for connection */
+.thought-node.selected {
     border-color: rgba(255, 234, 167, 0.9);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 60px rgba(255, 234, 167, 0.6);
     animation: pulse-border 1s ease-in-out infinite;
@@ -186,7 +214,7 @@
     z-index: 10;
 }
 
-.memory-node:hover .connection-port {
+.thought-node:hover .connection-port {
     opacity: 1;
 }
 

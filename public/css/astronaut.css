@@ -34,7 +34,7 @@
     }
 }
 
-/* Jump to Memory animation */
+/* Jump to Thought animation */
 .astronaut-container.jumping {
     animation: astronaut-jump 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
@@ -108,8 +108,8 @@
     }
 }
 
-/* When astronaut is at a Memory card */
-.astronaut-container.at-memory {
+/* When astronaut is at a Thought card */
+.astronaut-container.at-thought {
     bottom: auto;
     right: auto;
 }
