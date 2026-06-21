@@ -4,6 +4,7 @@
 
 const db = require('../db/connection');
 const { recordEvent } = require('../lib/events');
+const Tag = require('./tag');
 
 const now = () => new Date().toISOString();
 
@@ -24,6 +25,7 @@ const statements = {
     delete: db.prepare(`DELETE FROM thoughts WHERE id = ?`),
     touch: db.prepare(`UPDATE thoughts SET updated = @updated, last_touched = @last_touched WHERE id = @id`),
     depthByThought: db.prepare(`SELECT id, body, created FROM thought_depth WHERE thought_id = ? ORDER BY created ASC`),
+    countDepth: db.prepare(`SELECT COUNT(*) AS n FROM thought_depth WHERE thought_id = ?`),
     insertDepth: db.prepare(
         `INSERT INTO thought_depth (thought_id, body, created) VALUES (@thought_id, @body, @created)`
     )
@@ -42,7 +44,9 @@ function serialize(row) {
         y: row.y,
         created: row.created,
         updated: row.updated,
-        lastTouched: row.last_touched
+        lastTouched: row.last_touched,
+        tags: Tag.getFor('thought', row.id),
+        depthCount: statements.countDepth.get(row.id).n
     };
 }
 
@@ -59,7 +63,7 @@ const Thought = {
         return thought;
     },
 
-    create({ title, category, shortcut, content, x, y }) {
+    create({ title, category, shortcut, content, x, y, tags }) {
         const ts = now();
         const info = statements.insert.run({
             title,
@@ -72,6 +76,7 @@ const Thought = {
             updated: ts,
             last_touched: ts
         });
+        if (Array.isArray(tags)) Tag.setFor('thought', info.lastInsertRowid, tags);
         const thought = this.getById(info.lastInsertRowid);
         recordEvent('thought.created', 'thought', thought.id, thought);
         return thought;
@@ -100,6 +105,12 @@ const Thought = {
         sets.push('updated = @updated', 'last_touched = @last_touched');
         db.prepare(`UPDATE thoughts SET ${sets.join(', ')} WHERE id = @id`).run(params);
 
+        // Tags are a separate (polymorphic) store; replace the set if provided.
+        if (Array.isArray(fields.tags)) {
+            Tag.setFor('thought', id, fields.tags);
+            contentChanged = true;
+        }
+
         const thought = this.getById(id);
         if (contentChanged) recordEvent('thought.updated', 'thought', id, thought);
         return thought;
@@ -120,8 +131,10 @@ const Thought = {
     remove(id) {
         const existing = statements.byId.get(id);
         if (!existing) return false;
-        statements.delete.run(id); // cascades to depth, connections, memberships
-        recordEvent('thought.deleted', 'thought', id, serialize(existing));
+        const snapshot = serialize(existing); // capture tags before we unlink them
+        Tag.removeAllFor('thought', id);       // taggables is polymorphic - no FK cascade
+        statements.delete.run(id);             // cascades to depth, connections, memberships
+        recordEvent('thought.deleted', 'thought', id, snapshot);
         return true;
     }
 };

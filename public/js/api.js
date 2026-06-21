@@ -94,4 +94,65 @@ const ThoughtAPI = {
     }
 };
 
+const ConnectionAPI = {
+    // Get all connections (to redraw pathways on load)
+    async getAll() {
+        try {
+            const response = await fetch(`${API_BASE}/connections`);
+            if (!response.ok) throw new Error('Failed to fetch connections');
+            return await response.json();
+        } catch (error) {
+            console.error('❌ Error fetching connections:', error);
+            return [];
+        }
+    },
+
+    // Create a typed connection. Returns the saved connection, or null on failure.
+    async create({ fromThoughtId, toThoughtId, type }) {
+        try {
+            const response = await fetch(`${API_BASE}/connections`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fromThoughtId, toThoughtId, type })
+            });
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                throw new Error(err.error || 'Failed to create connection');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('❌ Error creating connection:', error);
+            return null;
+        }
+    },
+
+    // Change a connection's type
+    async updateType(id, type) {
+        try {
+            const response = await fetch(`${API_BASE}/connections/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type })
+            });
+            if (!response.ok) throw new Error('Failed to update connection');
+            return await response.json();
+        } catch (error) {
+            console.error('❌ Error updating connection:', error);
+            return null;
+        }
+    },
+
+    // Delete a connection
+    async delete(id) {
+        try {
+            const response = await fetch(`${API_BASE}/connections/${id}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Failed to delete connection');
+            return true;
+        } catch (error) {
+            console.error('❌ Error deleting connection:', error);
+            return false;
+        }
+    }
+};
+
 console.log('🔌 API Helper loaded - Ready to communicate with backend');

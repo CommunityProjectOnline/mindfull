@@ -144,6 +144,38 @@
     overflow-y: auto;
 }
 
+/* Tags (meta-words) on the card */
+.thought-node-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.thought-node-tags:empty {
+    display: none;
+}
+
+.thought-tag {
+    background: rgba(118, 75, 162, 0.18);
+    color: #cbb6ff;
+    border: 1px solid rgba(118, 75, 162, 0.35);
+    border-radius: 12px;
+    padding: 2px 9px;
+    font-size: 0.72em;
+}
+
+/* "Go Deeper" indicator */
+.thought-node-depth {
+    margin-top: 8px;
+    color: #7fd1b9;
+    font-size: 0.72em;
+}
+
+.thought-node-depth:empty {
+    display: none;
+}
+
 /* Custom scrollbar for content */
 .thought-node-content::-webkit-scrollbar {
     width: 6px;

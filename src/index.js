@@ -11,6 +11,7 @@ require('./db/seed')();
 
 // Import routes
 const thoughtsRouter = require('./routes/thoughts');
+const connectionsRouter = require('./routes/connections');
 
 // Middleware
 app.use(cors()); // Allow the frontend to call the API even when served from file:// during development
@@ -19,6 +20,7 @@ app.use(express.static('public'));
 
 // Routes
 app.use('/api/thoughts', thoughtsRouter);
+app.use('/api/connections', connectionsRouter);
 
 // Root endpoint - express.static serves index.html automatically
 // No need for explicit root route since public folder contains index.html

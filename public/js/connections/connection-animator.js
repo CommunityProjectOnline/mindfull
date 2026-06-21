@@ -98,8 +98,9 @@ const ConnectionAnimator = {
             conn.trail.setAttribute('x2', particleX);
             conn.trail.setAttribute('y2', particleY);
 
+            const rgb = conn.rgb || '102, 126, 234'; // per-connection color (by type)
             const trailBrightness = Math.sin(conn.pulsePhase) * 0.3 + MindfulConfig.particles.trail.minBrightness;
-            conn.trail.setAttribute('stroke', `rgba(102, 126, 234, ${trailBrightness})`);
+            conn.trail.setAttribute('stroke', `rgba(${rgb}, ${trailBrightness})`);
 
             // Update particle
             conn.particle.setAttribute('cx', particleX);
@@ -119,7 +120,7 @@ const ConnectionAnimator = {
             const minBrightness = 0.6;
             const brightness = minBrightness + (1 - minBrightness) * pulseIntensity;
             conn.particle.setAttribute('fill', `rgba(255, 255, 255, ${brightness})`);
-            conn.particle.style.filter = `drop-shadow(0 0 ${8 + pulseIntensity * 8}px rgba(102, 126, 234, ${brightness}))`;
+            conn.particle.style.filter = `drop-shadow(0 0 ${8 + pulseIntensity * 8}px rgba(${rgb}, ${brightness}))`;
 
             // Update halo
             conn.halo.setAttribute('cx', particleX);

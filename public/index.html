@@ -17,6 +17,7 @@
         <link rel="stylesheet" href="css/audio.css">
         <link rel="stylesheet" href="css/astronaut.css">
         <link rel="stylesheet" href="css/settings.css">
+        <link rel="stylesheet" href="css/connections.css">
     </head>
 
     <body>
@@ -147,9 +148,36 @@
                         <label for="thoughtContent">Content</label>
                         <textarea id="thoughtContent" rows="6" placeholder="Write your Thought here..."></textarea>
                     </div>
+                    <div class="form-group">
+                        <label for="thoughtTags">Meta-words (tags)</label>
+                        <input type="text" id="thoughtTags" placeholder="comma-separated, e.g. faith, love, grace">
+                        <small>Optional. Separate with commas — tags help connect Thoughts later.</small>
+                    </div>
                     <div class="form-actions">
                         <button type="button" id="cancelThoughtBtn" class="btn-secondary">Cancel</button>
                         <button type="submit" id="thoughtSubmitBtn" class="btn-primary">Create Thought</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Go Deeper Modal -->
+        <div id="goDeeperModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🔎 Go Deeper</h2>
+                    <button id="closeGoDeeper" class="close-btn">×</button>
+                </div>
+                <div id="goDeeperThought" class="go-deeper-thought"></div>
+                <div id="goDeeperEntries" class="go-deeper-entries"></div>
+                <form id="goDeeperForm" class="thought-form">
+                    <div class="form-group">
+                        <label for="goDeeperBody">Add in-depth content</label>
+                        <textarea id="goDeeperBody" rows="5" placeholder="Expand on this Thought without cluttering the bubble..." required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancelGoDeeper" class="btn-secondary">Close</button>
+                        <button type="submit" class="btn-primary">Add Depth</button>
                     </div>
                 </form>
             </div>
@@ -244,6 +272,7 @@
         <script src="js/canvas/dragging.js"></script>
 
         <!-- Connection Modules -->
+        <script src="js/connections/connection-types.js"></script>
         <script src="js/connections/connection-manager.js"></script>
         <script src="js/connections/connection-animator.js"></script>
 

@@ -1,19 +1,21 @@
 /**
  * Thought Manager Module
- * Handles creating, loading, editing, deleting, and rendering Thought nodes.
- * All data is persisted to the backend (SQLite) via ThoughtAPI.
+ * Handles creating, loading, editing, deleting, and rendering Thought nodes, plus tags
+ * (meta-words) and the "Go Deeper" flow. All data is persisted via ThoughtAPI.
  */
 
-// Get DOM elements (initialized after DOM loads)
+// Add/Edit modal elements
 let addThoughtBtn, addThoughtModal, closeThoughtBtn, cancelThoughtBtn, addThoughtForm;
 let thoughtModalTitle, thoughtSubmitBtn;
 
-// When set, the modal is editing this Thought; when null, it's creating a new one.
-let editingThoughtId = null;
+// Go Deeper modal elements
+let goDeeperModal, closeGoDeeperBtn, cancelGoDeeperBtn, goDeeperForm, goDeeperBody, goDeeperThoughtEl, goDeeperEntriesEl;
 
-/**
- * Initialize Thought manager
- */
+// When set, the add/edit modal is editing this Thought; null means creating.
+let editingThoughtId = null;
+// The Thought currently open in the Go Deeper modal.
+let goDeeperThoughtId = null;
+
 function initThoughtManager() {
     addThoughtBtn = document.getElementById('addThoughtBtn');
     addThoughtModal = document.getElementById('addThoughtModal');
@@ -22,6 +24,14 @@ function initThoughtManager() {
     addThoughtForm = document.getElementById('addThoughtForm');
     thoughtModalTitle = document.getElementById('thoughtModalTitle');
     thoughtSubmitBtn = document.getElementById('thoughtSubmitBtn');
+
+    goDeeperModal = document.getElementById('goDeeperModal');
+    closeGoDeeperBtn = document.getElementById('closeGoDeeper');
+    cancelGoDeeperBtn = document.getElementById('cancelGoDeeper');
+    goDeeperForm = document.getElementById('goDeeperForm');
+    goDeeperBody = document.getElementById('goDeeperBody');
+    goDeeperThoughtEl = document.getElementById('goDeeperThought');
+    goDeeperEntriesEl = document.getElementById('goDeeperEntries');
 
     if (!addThoughtBtn || !addThoughtModal || !addThoughtForm) {
         console.error('❌ Thought Manager: Required elements not found');
@@ -32,32 +42,28 @@ function initThoughtManager() {
     console.log('✅ Thought Manager initialized');
 }
 
-/**
- * Setup all event listeners
- */
 function setupEventListeners() {
-    // Open modal in "create" mode
     addThoughtBtn.addEventListener('click', () => openModalForCreate());
-
-    // Close modal handlers
     closeThoughtBtn.addEventListener('click', closeModal);
     cancelThoughtBtn.addEventListener('click', closeModal);
+    addThoughtModal.addEventListener('click', (e) => { if (e.target === addThoughtModal) closeModal(); });
+    addThoughtForm.addEventListener('submit', handleFormSubmit);
 
-    addThoughtModal.addEventListener('click', (e) => {
-        if (e.target === addThoughtModal) closeModal();
-    });
+    if (goDeeperModal) {
+        closeGoDeeperBtn.addEventListener('click', closeGoDeeper);
+        cancelGoDeeperBtn.addEventListener('click', closeGoDeeper);
+        goDeeperModal.addEventListener('click', (e) => { if (e.target === goDeeperModal) closeGoDeeper(); });
+        goDeeperForm.addEventListener('submit', handleGoDeeperSubmit);
+    }
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !addThoughtModal.classList.contains('hidden')) {
-            closeModal();
-        }
+        if (e.key !== 'Escape') return;
+        if (goDeeperModal && !goDeeperModal.classList.contains('hidden')) closeGoDeeper();
+        else if (!addThoughtModal.classList.contains('hidden')) closeModal();
     });
-
-    // Form submission (handles both create and edit)
-    addThoughtForm.addEventListener('submit', handleFormSubmit);
 }
 
-/* ----- Shortcut helpers: stored with {{braces}}, edited without them ----- */
+/* ----- helpers ----- */
 function stripBraces(s) {
     return (s || '').replace(/^\{\{/, '').replace(/\}\}$/, '');
 }
@@ -66,10 +72,14 @@ function wrapShortcut(s) {
     if (!t) return '';
     return t.startsWith('{{') ? t : `{{${t}}}`;
 }
+function parseTags(str) {
+    return (str || '')
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean);
+}
 
-/**
- * Open the modal to create a new Thought
- */
+/* ----- Add / Edit modal ----- */
 function openModalForCreate() {
     editingThoughtId = null;
     addThoughtForm.reset();
@@ -79,35 +89,25 @@ function openModalForCreate() {
     document.getElementById('thoughtTitle').focus();
 }
 
-/**
- * Open the modal to edit an existing Thought
- * @param {Object} thought - Thought data
- */
 function openModalForEdit(thought) {
     editingThoughtId = thought.id;
     document.getElementById('thoughtTitle').value = thought.title || '';
     document.getElementById('thoughtCategory').value = thought.category || '';
     document.getElementById('thoughtShortcut').value = stripBraces(thought.shortcut);
     document.getElementById('thoughtContent').value = thought.content || '';
+    document.getElementById('thoughtTags').value = (thought.tags || []).join(', ');
     if (thoughtModalTitle) thoughtModalTitle.textContent = '✎ Edit Thought';
     if (thoughtSubmitBtn) thoughtSubmitBtn.textContent = 'Save Thought';
     addThoughtModal.classList.remove('hidden');
     document.getElementById('thoughtTitle').focus();
 }
 
-/**
- * Close the modal
- */
 function closeModal() {
     addThoughtModal.classList.add('hidden');
     addThoughtForm.reset();
     editingThoughtId = null;
 }
 
-/**
- * Handle form submission - creates or updates depending on mode
- * @param {Event} e - Submit event
- */
 async function handleFormSubmit(e) {
     e.preventDefault();
 
@@ -115,7 +115,8 @@ async function handleFormSubmit(e) {
         title: document.getElementById('thoughtTitle').value.trim(),
         category: document.getElementById('thoughtCategory').value,
         shortcut: wrapShortcut(document.getElementById('thoughtShortcut').value),
-        content: document.getElementById('thoughtContent').value.trim()
+        content: document.getElementById('thoughtContent').value.trim(),
+        tags: parseTags(document.getElementById('thoughtTags').value)
     };
 
     if (!data.title || !data.category) {
@@ -125,13 +126,11 @@ async function handleFormSubmit(e) {
 
     try {
         if (editingThoughtId) {
-            // EDIT
             const updated = await ThoughtAPI.update(editingThoughtId, data);
             if (!updated) throw new Error('Update failed (the shortcut may already be in use)');
             updateThoughtNode(updated);
             console.log('✏️ Thought updated:', updated);
         } else {
-            // CREATE - drop it at a random spot in Inner Space
             data.x = Math.random() * (window.innerWidth - 400) + 200;
             data.y = Math.random() * (window.innerHeight - 400) + 200;
             const created = await ThoughtAPI.create(data);
@@ -148,11 +147,55 @@ async function handleFormSubmit(e) {
     }
 }
 
-/**
- * Create a new Thought node in the DOM
- * @param {Object} thought - Thought data object
- * @returns {HTMLElement} The created node element
- */
+/* ----- Go Deeper modal ----- */
+async function openGoDeeper(id) {
+    // Fetch fresh so we have the latest depth entries.
+    const thought = await ThoughtAPI.getById(id);
+    if (!thought) return;
+    goDeeperThoughtId = id;
+    goDeeperThoughtEl.innerHTML =
+        `<div class="go-deeper-title">${escapeHtml(thought.title)}</div>` +
+        `<div class="go-deeper-original">${escapeHtml(thought.content || '')}</div>`;
+    renderDepthEntries(thought.depth || []);
+    goDeeperForm.reset();
+    goDeeperModal.classList.remove('hidden');
+    goDeeperBody.focus();
+}
+
+function renderDepthEntries(entries) {
+    if (!entries.length) {
+        goDeeperEntriesEl.innerHTML = '<div class="go-deeper-empty">No deeper entries yet. Add the first below.</div>';
+        return;
+    }
+    goDeeperEntriesEl.innerHTML = entries
+        .map((d, i) => `<div class="go-deeper-entry"><span class="go-deeper-num">${i + 1}</span>${escapeHtml(d.body)}</div>`)
+        .join('');
+}
+
+function closeGoDeeper() {
+    goDeeperModal.classList.add('hidden');
+    goDeeperForm.reset();
+    goDeeperThoughtId = null;
+}
+
+async function handleGoDeeperSubmit(e) {
+    e.preventDefault();
+    const body = goDeeperBody.value.trim();
+    if (!body || !goDeeperThoughtId) return;
+
+    const updated = await ThoughtAPI.addDepth(goDeeperThoughtId, body);
+    if (!updated) {
+        alert('Failed to add depth. Please try again.');
+        return;
+    }
+    renderDepthEntries(updated.depth || []);
+    goDeeperForm.reset();
+    updateThoughtNode(updated); // refresh the card's depth indicator
+    goDeeperBody.focus();
+    console.log('🔎 Went deeper on Thought', goDeeperThoughtId);
+}
+
+/* ----- Node rendering ----- */
 function createThoughtNode(thought) {
     const node = document.createElement('div');
     node.className = 'thought-node';
@@ -169,6 +212,7 @@ function createThoughtNode(thought) {
         <div class="thought-node-header">
             <span class="thought-node-title"></span>
             <div class="thought-node-actions">
+                <button class="thought-action-btn deeper" type="button" title="Go Deeper">🔎</button>
                 <button class="thought-action-btn edit" type="button" title="Edit Thought">✎</button>
                 <button class="thought-action-btn delete" type="button" title="Delete Thought">×</button>
             </div>
@@ -178,16 +222,20 @@ function createThoughtNode(thought) {
             <span class="thought-node-shortcut"></span>
         </div>
         <div class="thought-node-content"></div>
+        <div class="thought-node-tags"></div>
+        <div class="thought-node-depth"></div>
     `;
 
     applyThoughtData(node, thought);
     AppState.constellation.appendChild(node);
 
-    // Attach drag + connection-port handlers
     if (window.NodeDragging) NodeDragging.attachDragHandlers(node);
     if (window.ConnectionManager) ConnectionManager.attachPortHandlers(node);
 
-    // Edit / delete actions (stopPropagation so they don't start a drag or astronaut jump)
+    node.querySelector('.thought-action-btn.deeper').addEventListener('click', (e) => {
+        e.stopPropagation();
+        openGoDeeper(thought.id);
+    });
     node.querySelector('.thought-action-btn.edit').addEventListener('click', async (e) => {
         e.stopPropagation();
         const fresh = await ThoughtAPI.getById(thought.id);
@@ -201,30 +249,29 @@ function createThoughtNode(thought) {
     return node;
 }
 
-/**
- * Fill a node's text fields from a Thought object
- */
 function applyThoughtData(node, thought) {
     node.querySelector('.thought-node-title').textContent = thought.title;
     node.querySelector('.thought-node-category').textContent = thought.category;
     node.querySelector('.thought-node-shortcut').textContent = thought.shortcut || '';
     node.querySelector('.thought-node-content').textContent = thought.content || '';
+
+    // Tags (meta-words) as chips
+    const tagsEl = node.querySelector('.thought-node-tags');
+    const tags = thought.tags || [];
+    tagsEl.innerHTML = tags.map((t) => `<span class="thought-tag">${escapeHtml(t)}</span>`).join('');
+
+    // Depth indicator
+    const depthEl = node.querySelector('.thought-node-depth');
+    const count = thought.depthCount != null ? thought.depthCount : (thought.depth ? thought.depth.length : 0);
+    depthEl.textContent = count > 0 ? `🔎 ${count} deeper` : '';
 }
 
-/**
- * Update an existing Thought node in the DOM after an edit
- * @param {Object} thought - Updated Thought data
- */
 function updateThoughtNode(thought) {
     const node = document.getElementById('thought-' + thought.id);
     if (!node) return;
     applyThoughtData(node, thought);
 }
 
-/**
- * Delete a Thought (with confirmation), removing its node and any in-canvas connections
- * @param {number} id - Thought ID
- */
 async function deleteThought(id) {
     const node = document.getElementById('thought-' + id);
     const title = node ? node.querySelector('.thought-node-title').textContent : 'this Thought';
@@ -236,14 +283,11 @@ async function deleteThought(id) {
         return;
     }
 
-    // Remove any connections touching this node from the canvas + state
-    if (node && window.AppState) {
-        AppState.getConnections().slice().forEach(conn => {
+    // The DB cascades this Thought's connections; remove their visuals from the canvas too.
+    if (node && window.AppState && window.ConnectionManager) {
+        AppState.getConnections().slice().forEach((conn) => {
             if (conn.fromPort.parentElement === node || conn.toPort.parentElement === node) {
-                [conn.path, conn.trail, conn.particle, conn.halo].forEach(el => {
-                    if (el && el.parentNode) el.parentNode.removeChild(el);
-                });
-                AppState.removeConnection(conn);
+                ConnectionManager.removeConnectionVisual(conn);
             }
         });
     }
@@ -252,29 +296,25 @@ async function deleteThought(id) {
     console.log('🗑️ Thought deleted:', id);
 }
 
-/**
- * Load all Thoughts from backend and render them
- */
+/* ----- Load ----- */
 async function loadThoughts() {
     try {
         const thoughts = await ThoughtAPI.getAll();
         console.log('📦 Loading', thoughts.length, 'thoughts');
 
-        document.querySelectorAll('.thought-node').forEach(n => n.remove());
-        thoughts.forEach(t => createThoughtNode(t));
+        document.querySelectorAll('.thought-node').forEach((n) => n.remove());
+        thoughts.forEach((t) => createThoughtNode(t));
 
+        // Connections must load after the nodes (their ports) exist.
+        if (window.ConnectionManager && ConnectionManager.loadConnections) {
+            await ConnectionManager.loadConnections();
+        }
         console.log('✅ Thoughts loaded');
     } catch (error) {
         console.error('❌ Error loading thoughts:', error);
     }
 }
 
-/**
- * Save a Thought's position to the backend (called after dragging)
- * @param {string} thoughtId - Thought ID
- * @param {number} x - X position
- * @param {number} y - Y position
- */
 async function saveThoughtPosition(thoughtId, x, y) {
     try {
         const result = await ThoughtAPI.update(thoughtId, { x, y });
@@ -284,6 +324,15 @@ async function saveThoughtPosition(thoughtId, x, y) {
     }
 }
 
+/* ----- util ----- */
+function escapeHtml(str) {
+    return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
 // Expose functions globally
 window.saveThoughtPosition = saveThoughtPosition;
 window.loadThoughts = loadThoughts;
@@ -291,7 +340,6 @@ window.loadThoughts = loadThoughts;
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
     initThoughtManager();
-    // Load Thoughts after a short delay to ensure backend is ready
     setTimeout(loadThoughts, 300);
 });
 

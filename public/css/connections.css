@@ -1,0 +1,77 @@
+/* Connection UI - type picker popup and the type badge on each pathway */
+
+/* Type picker popup (shown after dragging port -> port) */
+.connection-type-picker {
+    position: fixed;
+    z-index: 10001;
+    min-width: 210px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid rgba(102, 126, 234, 0.35);
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 30px rgba(102, 126, 234, 0.18);
+    backdrop-filter: blur(10px);
+    animation: connPickerIn 0.15s ease;
+}
+
+@keyframes connPickerIn {
+    from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+    to   { opacity: 1; transform: none; }
+}
+
+.connection-type-picker-title {
+    font-size: 0.72em;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #8b8ba7;
+    padding: 4px 8px 8px;
+}
+
+.conn-type-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 10px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #e0e0ff;
+    font-size: 0.92em;
+    text-align: left;
+    transition: background 0.15s ease;
+}
+
+.conn-type-option:hover {
+    background: rgba(102, 126, 234, 0.16);
+}
+
+.conn-type-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 8px currentColor;
+}
+
+.conn-type-icon {
+    width: 16px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.conn-type-name {
+    flex: 1;
+}
+
+/* Type badge on the pathway line */
+.connection-label text {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    user-select: none;
+}
+
+.connection-label:hover circle {
+    stroke-width: 2.5;
+}
