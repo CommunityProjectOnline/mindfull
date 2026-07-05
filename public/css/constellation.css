@@ -22,23 +22,47 @@
     cursor: grabbing !important;
 }
 
+/* The world - everything inside pans and zooms as one via CanvasViewport's transform */
+.world {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform-origin: 0 0;
+}
+
 /* Thought Node - Floating card (star) in Inner Space */
 .thought-node {
     position: absolute;
     width: 320px;
     background: linear-gradient(145deg, rgba(42, 42, 48, 0.95), rgba(31, 31, 36, 0.95));
-    border: 2px solid rgba(102, 126, 234, 0.4);
+    border: 2px solid color-mix(in srgb, var(--cat-color, #667eea) 35%, transparent);
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 40px rgba(102, 126, 234, 0.1);
     cursor: move;
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.25s ease;
     backdrop-filter: blur(10px);
 }
 
 .thought-node:hover {
-    border-color: rgba(118, 75, 162, 0.6);
+    border-color: color-mix(in srgb, var(--cat-color, #764ba2) 65%, transparent);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 60px rgba(102, 126, 234, 0.2);
+}
+
+/* Category color stripe down the card's left edge */
+.thought-node-stripe {
+    position: absolute;
+    left: -2px;
+    top: 14px;
+    bottom: 14px;
+    width: 4px;
+    border-radius: 4px;
+    background: var(--cat-color, #667eea);
+    box-shadow: 0 0 8px var(--cat-color, #667eea);
+    opacity: 0.85;
+    pointer-events: none;
 }
 
 .thought-node.dragging {
@@ -115,12 +139,12 @@
 
 .thought-node-category {
     display: inline-block;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
+    background: var(--cat-color, #667eea);
+    color: #14141c;
     padding: 5px 14px;
     border-radius: 16px;
     font-size: 0.8em;
-    font-weight: 500;
+    font-weight: 600;
     flex-shrink: 0;
 }
 
@@ -165,6 +189,27 @@
     font-size: 0.72em;
 }
 
+/* Source (provenance) line on the card */
+.thought-node-source {
+    margin-top: 8px;
+    color: #9aa5c4;
+    font-size: 0.75em;
+    font-style: italic;
+}
+
+.thought-node-source::before {
+    content: 'Source · ';
+    font-style: normal;
+    color: #6f7899;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.06em;
+}
+
+.thought-node-source:empty {
+    display: none;
+}
+
 /* "Go Deeper" indicator */
 .thought-node-depth {
     margin-top: 8px;
@@ -174,6 +219,79 @@
 
 .thought-node-depth:empty {
     display: none;
+}
+
+/* Origin - the Thought a study grows from (the center point of its pathways) */
+.thought-node.origin {
+    border-color: rgba(255, 234, 167, 0.65);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 50px rgba(255, 234, 167, 0.18);
+}
+
+.thought-node.origin:hover {
+    border-color: rgba(255, 234, 167, 0.9);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 70px rgba(255, 234, 167, 0.28);
+}
+
+.thought-node.origin::after {
+    content: '✦ Origin';
+    position: absolute;
+    top: -11px;
+    left: 14px;
+    background: linear-gradient(135deg, #ffeaa7, #f4d03f);
+    color: #2a2415;
+    font-size: 0.68em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 2px 9px;
+    border-radius: 10px;
+    box-shadow: 0 0 14px rgba(255, 234, 167, 0.5);
+    pointer-events: none;
+}
+
+/* Zoom Controls (bottom-right, clear of the astronaut) */
+.zoom-controls {
+    position: fixed;
+    bottom: 30px;
+    right: 160px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(15, 15, 24, 0.85);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 10px;
+    padding: 4px;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+}
+
+.zoom-btn,
+.zoom-level {
+    background: transparent;
+    border: none;
+    color: #b0b0c8;
+    cursor: pointer;
+    border-radius: 7px;
+    transition: all 0.15s ease;
+}
+
+.zoom-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 1.15em;
+    line-height: 1;
+}
+
+.zoom-level {
+    min-width: 52px;
+    height: 30px;
+    font-size: 0.82em;
+    font-family: 'Courier New', monospace;
+}
+
+.zoom-btn:hover,
+.zoom-level:hover {
+    background: rgba(102, 126, 234, 0.2);
+    color: #fff;
 }
 
 /* Custom scrollbar for content */
@@ -205,6 +323,8 @@
     height: 100%;
     pointer-events: none;
     z-index: 1;
+    /* Pathways must stay visible when Thoughts sit outside the initial viewport */
+    overflow: visible;
 }
 
 /* String line (static glow) */

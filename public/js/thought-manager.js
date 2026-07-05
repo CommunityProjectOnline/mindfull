@@ -95,6 +95,7 @@ function openModalForEdit(thought) {
     document.getElementById('thoughtCategory').value = thought.category || '';
     document.getElementById('thoughtShortcut').value = stripBraces(thought.shortcut);
     document.getElementById('thoughtContent').value = thought.content || '';
+    document.getElementById('thoughtSource').value = thought.source || '';
     document.getElementById('thoughtTags').value = (thought.tags || []).join(', ');
     if (thoughtModalTitle) thoughtModalTitle.textContent = '✎ Edit Thought';
     if (thoughtSubmitBtn) thoughtSubmitBtn.textContent = 'Save Thought';
@@ -116,6 +117,7 @@ async function handleFormSubmit(e) {
         category: document.getElementById('thoughtCategory').value,
         shortcut: wrapShortcut(document.getElementById('thoughtShortcut').value),
         content: document.getElementById('thoughtContent').value.trim(),
+        source: document.getElementById('thoughtSource').value.trim(),
         tags: parseTags(document.getElementById('thoughtTags').value)
     };
 
@@ -131,8 +133,13 @@ async function handleFormSubmit(e) {
             updateThoughtNode(updated);
             console.log('✏️ Thought updated:', updated);
         } else {
-            data.x = Math.random() * (window.innerWidth - 400) + 200;
-            data.y = Math.random() * (window.innerHeight - 400) + 200;
+            // Spawn near the center of the current view (in world coordinates, so it
+            // lands where you're looking regardless of pan/zoom), with a little scatter.
+            const center = window.CanvasViewport
+                ? CanvasViewport.toWorld(window.innerWidth / 2, window.innerHeight / 2)
+                : { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+            data.x = center.x - 160 + (Math.random() - 0.5) * 300;
+            data.y = center.y - 100 + (Math.random() - 0.5) * 240;
             const created = await ThoughtAPI.create(data);
             if (!created) throw new Error('Create failed (the shortcut may already be in use)');
             createThoughtNode(created);
@@ -205,6 +212,7 @@ function createThoughtNode(thought) {
     node.style.top = thought.y + 'px';
 
     node.innerHTML = `
+        <span class="thought-node-stripe"></span>
         <div class="connection-port port-top" data-port="top"></div>
         <div class="connection-port port-right" data-port="right"></div>
         <div class="connection-port port-bottom" data-port="bottom"></div>
@@ -222,12 +230,14 @@ function createThoughtNode(thought) {
             <span class="thought-node-shortcut"></span>
         </div>
         <div class="thought-node-content"></div>
+        <div class="thought-node-source"></div>
         <div class="thought-node-tags"></div>
         <div class="thought-node-depth"></div>
     `;
 
     applyThoughtData(node, thought);
-    AppState.constellation.appendChild(node);
+    // Nodes live in the world container so they pan and zoom with the camera.
+    (AppState.world || AppState.constellation).appendChild(node);
 
     if (window.NodeDragging) NodeDragging.attachDragHandlers(node);
     if (window.ConnectionManager) ConnectionManager.attachPortHandlers(node);
@@ -252,8 +262,16 @@ function createThoughtNode(thought) {
 function applyThoughtData(node, thought) {
     node.querySelector('.thought-node-title').textContent = thought.title;
     node.querySelector('.thought-node-category').textContent = thought.category;
+
+    // The category's color threads through the whole card (stripe, chip, border)
+    // and becomes this Thought's star color at the Constellation altitude.
+    node.dataset.category = thought.category || '';
+    if (window.CategoryColors) {
+        node.style.setProperty('--cat-color', CategoryColors.colorFor(thought.category));
+    }
     node.querySelector('.thought-node-shortcut').textContent = thought.shortcut || '';
     node.querySelector('.thought-node-content').textContent = thought.content || '';
+    node.querySelector('.thought-node-source').textContent = thought.source || '';
 
     // Tags (meta-words) as chips
     const tagsEl = node.querySelector('.thought-node-tags');
@@ -293,6 +311,8 @@ async function deleteThought(id) {
     }
 
     if (node) node.remove();
+    // Memberships cascaded in the DB; refresh bubbles so counts and shapes stay true.
+    if (window.MemoryRenderer) MemoryRenderer.load();
     console.log('🗑️ Thought deleted:', id);
 }
 
@@ -309,6 +329,8 @@ async function loadThoughts() {
         if (window.ConnectionManager && ConnectionManager.loadConnections) {
             await ConnectionManager.loadConnections();
         }
+        // Memories last: their bubbles wrap the nodes that now exist.
+        if (window.MemoryRenderer) await MemoryRenderer.load();
         console.log('✅ Thoughts loaded');
     } catch (error) {
         console.error('❌ Error loading thoughts:', error);

@@ -1,0 +1,112 @@
+/* The Constellation altitude - crossfade rules driven by the --altitude variable
+   (0 = workspace, 1 = full sky), set on #constellation by CanvasViewport. */
+
+/* Cards dissolve as you ascend... */
+.thought-node {
+    opacity: calc(1 - var(--altitude, 0));
+}
+
+/* ...and stop catching the mouse once you're properly in the sky. */
+body.constellation-mode .thought-node {
+    pointer-events: none;
+}
+
+/* Type badges are unreadable from orbit - fade them with the cards. */
+.connection-label {
+    opacity: calc(1 - var(--altitude, 0));
+}
+
+body.constellation-mode .connection-label {
+    pointer-events: none !important;
+}
+
+/* Stars: quiet by default, clickable from the sky. */
+.star-field {
+    pointer-events: none;
+}
+
+body.constellation-mode .star-field g {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+/* Background dust - behind the world, never interactive */
+.dust-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* ---- Focus mode: hover a Thought and the canvas dims around it ---- */
+body.focus-active .thought-node {
+    opacity: calc((1 - var(--altitude, 0)) * 0.3);
+}
+
+body.focus-active .thought-node.focus-self,
+body.focus-active .thought-node.focus-neighbor {
+    opacity: calc(1 - var(--altitude, 0));
+}
+
+body.focus-active .thought-node.focus-self {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 70px rgba(102, 126, 234, 0.35);
+}
+
+/* ---- The +N cross-link badge: "this card also connects elsewhere" ---- */
+.xlink-badge {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    min-width: 26px;
+    height: 26px;
+    padding: 0 8px;
+    border-radius: 13px;
+    border: 1px solid rgba(148, 168, 226, 0.55);
+    background: rgba(10, 12, 24, 0.92);
+    color: #aab8e8;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 5;
+    transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.xlink-badge:hover {
+    border-color: #8ea2ff;
+    color: #e3e9ff;
+}
+
+.xlink-badge.pinned {
+    background: #26305c;
+    border-color: #8ea2ff;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(102, 126, 234, 0.55);
+}
+
+/* Cards fade out at altitude and take their badges with them; make sure a ghosted
+   badge can't catch clicks from orbit either. */
+body.constellation-mode .xlink-badge {
+    pointer-events: none;
+}
+
+/* ---- Dragging a whole Memory by its name label ---- */
+.memory-name {
+    cursor: grab;
+}
+
+body.memory-dragging,
+body.memory-dragging .memory-name {
+    cursor: grabbing !important;
+}
+
+body.memory-dragging .thought-node {
+    transition: none; /* cluster follows the hand instantly */
+}
+
+/* Memory bubbles firm up into constellation outlines as the cards fade. */
+body.constellation-mode .memory-blob {
+    transition: fill 0.4s ease, stroke 0.4s ease;
+}

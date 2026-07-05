@@ -4,6 +4,10 @@
  */
 
 const NodeDragging = {
+    // Where the drag started: cursor (screen px) and node position (world px).
+    // Screen deltas are divided by the zoom level to become world deltas.
+    _start: { clientX: 0, clientY: 0, left: 0, top: 0 },
+
     /**
      * Initialize dragging event listeners
      */
@@ -32,9 +36,11 @@ const NodeDragging = {
             AppState.isDragging = true;
             AppState.currentNode = node;
 
-            // Calculate offset from mouse to node position
-            AppState.offsetX = e.clientX - node.offsetLeft;
-            AppState.offsetY = e.clientY - node.offsetTop;
+            // Remember where the drag began, in both screen and world coordinates
+            this._start.clientX = e.clientX;
+            this._start.clientY = e.clientY;
+            this._start.left = node.offsetLeft;
+            this._start.top = node.offsetTop;
 
             // Add dragging class for visual feedback
             node.classList.add('dragging');
@@ -61,9 +67,10 @@ const NodeDragging = {
     handleMouseMove(e) {
         if (!AppState.isDragging || !AppState.currentNode) return;
 
-        // Calculate new position
-        const newX = e.clientX - AppState.offsetX;
-        const newY = e.clientY - AppState.offsetY;
+        // Screen delta -> world delta (accounts for the current zoom level)
+        const zoom = window.CanvasViewport ? CanvasViewport.zoom : 1;
+        const newX = this._start.left + (e.clientX - this._start.clientX) / zoom;
+        const newY = this._start.top + (e.clientY - this._start.clientY) / zoom;
 
         // Update node position
         AppState.currentNode.style.left = newX + 'px';

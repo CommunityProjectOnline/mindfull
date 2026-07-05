@@ -23,6 +23,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Local assistant settings
+.claude/
+
 # Build files
 dist/
 build/

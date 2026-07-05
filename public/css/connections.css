@@ -65,6 +65,44 @@
     flex: 1;
 }
 
+/* Pathway color swatches (in the connection badge menu) */
+.conn-swatch-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    padding: 2px 8px 10px;
+}
+
+.conn-swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.conn-swatch:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 10px currentColor;
+}
+
+.conn-swatch.current {
+    border-color: #fff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+/* Delete option at the bottom of the badge menu */
+.conn-menu-delete {
+    border-top: 1px solid rgba(102, 126, 234, 0.18);
+    border-radius: 0 0 8px 8px;
+    color: #e58888;
+}
+
+.conn-menu-delete:hover {
+    background: rgba(234, 102, 102, 0.16);
+}
+
 /* Type badge on the pathway line */
 .connection-label text {
     font-family: 'Courier New', monospace;

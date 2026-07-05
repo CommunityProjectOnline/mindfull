@@ -26,6 +26,19 @@ db.pragma('foreign_keys = ON');
 const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
 db.exec(schema);
 
+// CREATE IF NOT EXISTS doesn't add new columns to tables that already exist, so databases
+// created before a column was introduced get it added here.
+function ensureColumn(table, column, ddl) {
+    const has = db.pragma(`table_info(${table})`).some((c) => c.name === column);
+    if (!has) {
+        db.exec(`ALTER TABLE ${table} ADD COLUMN ${ddl}`);
+        console.log(`🗄️  Migrated: added ${table}.${column}`);
+    }
+}
+ensureColumn('thoughts', 'source', 'source TEXT');
+ensureColumn('connections', 'pathway_id', 'pathway_id INTEGER REFERENCES pathways(id) ON DELETE SET NULL');
+ensureColumn('memories', 'color', 'color TEXT');
+
 console.log(`🗄️  SQLite ready at ${DB_PATH}`);
 
 module.exports = db;

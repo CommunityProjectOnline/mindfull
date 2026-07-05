@@ -1,187 +1,143 @@
-# MindFull — Vision & Build Plan
+# MindFull — Vision & Build Plan (v2)
 
-*A study tool that thinks the way an associative mind does. Personal side project.*
+*A visual research environment that thinks the way an associative mind does.*
+*v2 — updated July 4, 2026, after the planning session that reframed MindFull as a research app.*
 
 ---
 
 ## For the AI building this (read first)
 
-This is a ground-up rebuild of an existing prototype that lives in this same folder. **Keep the soul, rebuild the engine.** The look, the name, the logo, the canvas feel, the music, the sound effects, and the astronaut mascot all stay. The data model and backend get rebuilt from scratch, because the new concept needs things the old code was never designed for (one note belonging to many groupings, sharing, a full timeline).
+Phases 1 and 2 of v1 are **done**: SQLite backend (`src/`), full Thought CRUD, tags, Go Deeper, drag/pan, typed connections with sound and the light pulse. The schema (`src/db/schema.sql`) already supports many-to-many Memories, typed connections, tags, and an `events` table for the Timeline.
 
-Borrow freely from the existing files. The pieces worth reusing or upgrading:
-
-- `public/css/*.css` — the whole dark "space" aesthetic (base, navbar, sidebar, constellation, modal, audio, astronaut, settings). Reuse and modernize.
-- `public/js/connections/connection-animator.js` — already animates a particle of light traveling along a connection. This is the "neural light pulse" effect described below. Reuse and upgrade it.
-- `public/js/connections/connection-manager.js` — port-to-port connection drawing logic.
-- `public/js/canvas/dragging.js`, `public/js/canvas/panning.js` — drag and pan behavior.
-- `public/js/audio.js` and `public/js/config.js` — audio system and central config/tuning constants.
-- `public/js/ui/astronaut-controller.js` — mascot movement.
-- `public/assets/` — logo (`logo-constellation.svg`), favicon, astronaut art (`astronaut_chibi2.png`).
-- `mindfull-music/`, `mindfull-sound-effects/`, `public/sounds/` — ambient tracks and the click/connect sound already exist. Use them.
-- `ROADMAP.md`, `NOTES.md` — original notes for context.
-
-The old backend (`src/`) was Express with **in-memory** storage and a model where a "card" was the whole unit. Do not carry that model forward. Use it only as a reference for the API shape.
+Everything in v1 about keeping the soul still holds: the name, logo, dark space aesthetic, canvas feel, music, sound effects, and the astronaut all stay. This v2 supersedes v1's concept, terminology, and roadmap sections.
 
 ---
 
-## The concept
+## The concept (v2)
 
-MindFull is a study tool for people who don't think in straight lines. Paper notes are linear — write a line, write the next line, and the connections between ideas live only in your head. MindFull puts the connections on the surface.
+MindFull is a **research app** for people who don't think in straight lines. The artifact isn't the conclusion — it's the *thought process*.
 
-You drop a **Thought** onto a canvas (your "Inner Space"). You drop another near it. You draw a connection between them, and you label what kind of connection it is — one scripture *confirms* another, or *rebuts* it, or *branches from* it. As thoughts connect and cluster, they form a **Memory**: a named, growing body of connected thinking. A Memory reads like a document — a white paper you can name, study, print, and one day share.
+You drop **Thoughts** onto your canvas (your Inner Space) and connect them. Chains of connections form colored **Pathways** branching off an **Origin**. The pathways of a study get wrapped in a soft, organic bubble — a **Memory** — shaped by the thinking inside it. A Memory reads like a document: first Thought at the top, latest at the bottom, connection types as labels between sections. Timestamped end to end.
 
-The whole thing should feel like art. Beautiful, calm, no ceiling on where a study can go. The mascot is an astronaut because this is *inner* space — your mind — not outer space. The connections behave like neural pathways between neurons, with light pulsing along them as ideas link up.
+Research means provenance: Thoughts can carry etymology, word translations, scripture cross-references, and source citations, all as first-class categories and connection types.
+
+And research is meant to be tested: one day you **publish** a Memory to the **Galaxy**. Published work can be seen by anyone, deleted by no one, and challenged only one way — a **rebuttal**, attached as its own Thought with a "Rebuts" connection. Your reasoning stands or falls in public, on the record.
+
+The whole thing should feel like art. Calm, beautiful, no ceiling on where a study can go.
 
 ---
 
-## Locked terminology
+## Locked terminology (v2)
 
-These terms are fixed. Use them exactly, everywhere — UI, code, comments.
+Use these exactly, everywhere — UI, code, comments.
 
-- **Thought** — the core unit. A bubble/card on the canvas. Has a title, category, shortcut, content, and meta tags. (This was called a "memory" in the old prototype. It is now a Thought.)
-- **Memory** — a named cluster of connected Thoughts. Drawn as a circle/perimeter around the group that **grows** as more Thoughts join. A Memory behaves like a document (the "white paper") — it can be named, read top to bottom, printed, and shared. A single Thought can belong to **many** Memories.
-- **Connection** — a typed link between two Thoughts (e.g. confirms, rebuts, branches from). Connections are the neural pathways. Making one plays a sound and sends a pulse of light down the line.
-- **Inner Space** — the canvas where Thoughts and Memories live.
-- **Constellation** — the image formed in the background by your stars (your Thoughts and Memories) as your Inner Space fills in.
-- **Timeline** — a replay of everything you've created or touched, from the "Big Bang" (your first Thought) to now.
-- **Forgotten** — Memories you haven't touched in a long time, surfaced so you can revisit them.
-- **The chibi / astronaut** — the mascot. Floats to whatever Thought or Memory you're touching. Later, it can interact with them.
+- **Thought** — the core unit. A bubble on the canvas. Title, category, shortcut, content, meta-words, and (new) an optional **source** citation.
+- **Connection** — a typed link between two Thoughts (Confirms, Rebuts, Branches from, Relates to, Question — plus research types like Cites, Translates, Derives from). The neural pathways. Making one plays a sound and sends a pulse of light down the line.
+- **Origin** — the Thought a study grows from; the center point. Rendered in a distinct color/glow.
+- **Pathway** — a branch of connected Thoughts growing off an Origin. Each branch auto-gets its own color from a palette; the user can override a branch's color. Pathways *emerge* from connecting — there is no "create pathway" form.
+- **Memory** — a named cluster of connected Thoughts, wrapped in a **wobbly organic bubble that hugs the shape of its pathways** (not a circle). Behaves like a document. A Thought can belong to many Memories; multiple Memories live on the same canvas and may overlap.
+- **Inner Space** — your canvas. Pannable and zoomable.
+- **Constellation** — what your Thoughts and Memories *become* at a distance: zoomed out, Thoughts are stars and Memory bubbles are constellation outlines. Not decoration — your actual data seen from altitude.
+- **The Galaxy** — the public layer (later phase). Published Memories from everyone form the wider sky. Public work is visible to all, deletable by none, rebuttable by anyone.
+- **Stardust** — the staging inbox. Quick captures and AI-extracted Thoughts land here for review before being placed on the canvas. *(Name proposed — confirm or rename.)*
+- **Timeline** — replay of everything from the Big Bang (your first Thought) to now. Backed by the `events` table.
+- **Forgotten** — Memories untouched for a long stretch, surfaced for revisiting.
+- **The chibi / astronaut** — the mascot. Floats to whatever you're touching; later, interacts.
+
+---
+
+## The three altitudes (semantic zoom)
+
+One camera, one space, three readings. This unifies zoom, stars, constellations, and the Galaxy into a single mechanic:
+
+1. **Workspace** (zoomed in) — readable Thought bubbles, pathway colors, Memory blobs. Where you work.
+2. **Constellation view** (zoomed out) — Thoughts shrink to stars, blobs become glowing constellation outlines, names float beside them. The more you've built, the fuller your sky. Where you *see* your mind.
+3. **Galaxy** (far out, later phase) — your whole Inner Space is one bright cluster among everyone's published constellations. Where your work meets the world.
+
+Zoom is continuous (wheel-to-cursor / pinch); the rendering crossfades between altitudes.
 
 ---
 
 ## Data model
 
-The model must support, from day one: a Thought living in multiple Memories, typed connections, and a complete history for the timeline.
+Already built (Phase 1): `thoughts`, `thought_depth`, `memories`, `memory_thoughts` (many-to-many), `connections`, `tags`/`taggables`, `events`. All timestamped.
 
-**Thought**
-- `id`
-- `title`
-- `category` (Scripture, Note, Prayer, Recipe, Quote, Idea, Goal, etc.)
-- `shortcut` (unique handle for referencing, e.g. `{{jn3:16}}`)
-- `content` (the main body)
-- `depth` (additional, in-depth content added later via "Go Deeper" — can be one rich field or a list of appended entries)
-- `tags` (meta-words; see Tags below)
-- `position` (x, y on the canvas)
-- `created`, `updated`, `lastTouched` timestamps
+**Additions needed for v2:**
 
-**Memory**
-- `id`
-- `name` (user-given; this is the "white paper" title)
-- `thoughtIds` (the Thoughts in this Memory — many-to-many; a Thought can be in several Memories)
-- `tags`
-- `created`, `updated`, `lastTouched` timestamps
-
-**Connection**
-- `id`
-- `fromThoughtId`, `toThoughtId`
-- `type` (the relationship — see Connection types below)
-- `created` timestamp
-
-Everything timestamped so the Timeline can reconstruct the full history.
-
-> **Open decision (proposed default):** what makes a Memory's circle grow? Proposed default — the radius scales with the number of Thoughts in the Memory plus the number of Connections among them, so denser, more-developed studies visibly become bigger Memories. *Confirm or adjust.*
-
-> **Open decision (proposed default):** are Connection types a fixed list or user-defined? Proposed default — ship a small fixed starter set (**Confirms, Rebuts, Branches from, Relates to, Question**), each with its own color/icon, and allow custom types later. *Confirm or adjust.*
+- `thoughts.source` — optional citation/provenance text (research app = show your sources).
+- **Pathway color** — proposed: a lightweight `pathways` table (`id`, `origin_thought_id`, `color`, optional `name`), with connections optionally assigned to one. Auto-derived on connect; color user-overridable. *(Open decision below.)*
+- **Embeddings** (later, Rediscovery phase) — a vector per Thought stored in SQLite via `sqlite-vec`, powering semantic "connect these?" suggestions. No separate vector database until the Galaxy goes multi-user (then evaluate ChromaDB/pgvector).
+- **Published snapshots** (Galaxy phase) — publishing freezes a versioned snapshot of a Memory; rebuttals attach to the snapshot.
 
 ---
 
-## Feature areas
+## Feature areas (v2 deltas)
 
-### Inner Space (the canvas)
-The existing dark grid canvas, modernized. Draggable Thoughts, pan around freely, smooth and calm. This is home base.
-
-### Thoughts
-- Add a Thought via a modal: title, category, shortcut, content, tags.
-- **Go Deeper** — a button on an existing Thought to add more in-depth content after it's created. Lets a Thought grow without cluttering the bubble.
-- Reference Thoughts elsewhere by their `{{shortcut}}`.
-
-### Connections (neural pathways)
-- Draw connections port-to-port between Thoughts (logic already exists in the prototype).
-- Pick a **type** for each connection (confirms, rebuts, etc.).
-- **On connect:** play the existing connect sound, and send a **pulse of light traveling down the line** from one Thought to the other — the neural light effect. Reuse/upgrade `connection-animator.js`.
+### Inner Space
+- **Zoom in/out** (missing today) — wheel-to-cursor and pinch, with the semantic-zoom altitudes above. Pan already works.
+- Pathway rendering: Origin in its distinct color, branch colors, light pulses along the lines (already built — keep and upgrade).
 
 ### Memories
-- A Memory forms from connected Thoughts and is **named** by the user.
-- The circle/perimeter around the cluster **grows** as Thoughts and connections are added.
-- **Document view:** read a Memory as a flowing white paper — its Thoughts as sections, its connections as labeled relationships ("Confirms:", "Rebuts:"). This is the study artifact.
-- **Bring Memories together** — combine Memories (they can share Thoughts).
-- **Print / export** — print a Memory or a Thought. The connection *types* carry onto the page as labels so the printout reads as a real study, not a flat list.
+- Create/name a Memory from connected Thoughts; the **organic blob** perimeter grows and reshapes as pathways grow.
+- Multiple Memories on one canvas; overlapping allowed (shared Thoughts).
+- **Document view** — auto-composed chronologically: first Thought at top, latest at bottom, Go Deeper entries under their Thought, connection types as labels ("Confirms:", "Rebuts:"). Title and metadata editable. Every element timestamped. Reordering + hand-written narrative between sections: later.
+- Print / export — the connection types carry onto the page so a printout reads as a real study.
 
-### Tags / meta-words
-- Every Thought and Memory can carry meta-words.
-- As your vocabulary of tags grows over time, MindFull **surfaces forgotten links** — e.g. "this new Thought shares tags with one from months ago. Connect them?" Tags don't just label; they introduce Thoughts to each other.
+### AI ingestion (new)
+- **The extraction prompt** (`AI-Ingestion-Prompt.md`, exists now) — paste it plus any source material (research paper, article, AI conversation, speech-to-text transcript) into an AI; get back Thoughts (title, category, shortcut, content, meta-words, source) and suggested typed connections as JSON.
+- **In-app import** (build later) — paste that JSON into MindFull; Thoughts land in **Stardust** for review, never dumped raw onto the canvas. You approve, place, and connect.
+- Future: call the AI from inside the app (Claude API) so import is one step.
 
-### Constellations
-- As Thoughts and Memories accumulate, stars appear in the background and form images — Constellations. The beautiful, generative payoff of building.
+### Rediscovery
+- Tag-based suggestions (v1 plan) **plus** embedding-based semantic suggestions: "this new Thought is conceptually close to one from months ago — connect them?"
+- Future (the Chris feature): flag citations that don't actually support what they're cited for — semantic distance between claim and source.
 
-### Timeline (Big Bang)
-- Scrub through the entire history, from your first Thought (the Big Bang) to now.
-- Watch Thoughts appear, connections form, and Memories grow over time.
+### The Galaxy (public layer, later)
+- Accounts. Publish a Memory → immutable versioned snapshot, visible to all.
+- No one can delete or edit another's published work. The only interaction is a **rebuttal**: a Thought of your own, connected with "Rebuts."
+- Published constellations from everyone form the deep background of the Galaxy altitude.
 
-### Forgotten
-- Memories untouched for a long stretch collect here. Open the view to revisit them.
-
-### The chibi / astronaut
-- Floats to whatever Thought or Memory you're currently touching/grabbing.
-- Future: can interact with Thoughts and Memories (e.g. prompts, reactions, help).
-
-### Music & sound
-- Ambient space-hum starts playing automatically on sign-in. Calm, made for deep, relaxed study — not distracting.
-- In **Settings:** change the station/track, change the volume, or turn music off entirely.
-- Connecting Thoughts plays a sound (asset already in the folder).
-
-### Sharing (later phase)
-- Share a Memory with friends or the world.
-- Others can **tap into** a shared Memory and, if it holds together, add their own **rebuttal** Thoughts to your thinking — collaborative study.
+### Unchanged from v1
+Music & sound, Timeline (Big Bang replay), Forgotten, chibi behavior, Go Deeper, `{{shortcut}}` references.
 
 ---
 
 ## Tech direction
 
-- **Keep:** name, logo, the dark space aesthetic and CSS, the canvas/drag/pan feel, the music + sound effects, the astronaut, the light-pulse animation.
-- **Rebuild:** the backend and data layer. Use a **real database** (e.g. SQLite to start — simple, file-based, perfect for a personal side project; can move to Postgres later) with a schema built for many-to-many (Thoughts ↔ Memories) and full timestamping.
-- **Frontend:** the prototype is vanilla JS modules and that's fine to continue, but the canvas interactions (a growing-circle Memory, the timeline, lots of moving nodes) may be smoother with a light framework or a canvas/SVG rendering layer. Builder's call — keep it as simple as the feature set allows.
-- **Accounts:** needed once sharing arrives. Can wait until then.
+- **Keep:** vanilla JS modules, Express + SQLite. It's working and it's understandable.
+- **Evolve the rendering as needed:** Memory blobs and pathway colors are fine in SVG. The starfield at Constellation altitude may want a `<canvas>` layer when Thought counts grow. Don't adopt a framework until a concrete feature actually hurts without one.
+- **Vectors:** `sqlite-vec` inside the existing database when Rediscovery lands — not a separate ChromaDB server. Revisit only when the Galaxy is real and multi-user.
+- **Accounts:** at the Galaxy phase, not before.
 
 ---
 
-## Phased roadmap
+## Phased roadmap (v2)
 
-Small phases. Each one should leave a usable app.
+Each phase leaves a usable app.
 
-**Phase 1 — Foundation**
-Rebuild the data model and database (Thought, Memory, Connection, tags, timestamps). Wire up create/read/update/delete. Get the canvas rendering Thoughts from the database.
+**Phase 3 — Canvas depth.** Zoom (wheel-to-cursor + pinch), Origin/branch pathway colors with user override, `thoughts.source` field.
 
-**Phase 2 — Thoughts & Connections**
-Add Thought modal, Go Deeper, drag/pan, typed connections, connect sound, and the neural light pulse.
+**Phase 4 — Memories.** Name a cluster, the organic blob perimeter, multiple/overlapping Memories, chronological document view, print/export.
 
-**Phase 3 — Memories**
-Clusters form Memories, the growing circle, naming, the document/white-paper view, print/export.
+**Phase 5 — Stardust & AI ingestion.** The staging inbox, quick capture, JSON import consuming the extraction prompt's output.
 
-**Phase 4 — Tags & rediscovery**
-Meta-words on Thoughts and Memories, plus the "you might want to connect these" suggestions driven by shared tags.
+**Phase 6 — Constellation altitude.** Semantic zoom-out: Thoughts as stars, Memories as constellation outlines, the filling sky.
 
-**Phase 5 — Constellations & background stars**
-Stars appear and form Constellations as Inner Space fills.
+**Phase 7 — Rediscovery.** Tag suggestions + embeddings (`sqlite-vec`) for semantic "connect these?" nudges.
 
-**Phase 6 — Timeline**
-The Big Bang replay of all history.
+**Phase 8 — Timeline.** The Big Bang replay (events table is already recording).
 
-**Phase 7 — Forgotten**
-Surface untouched Memories.
+**Phase 9 — Forgotten.** Surface untouched Memories.
 
-**Phase 8 — Chibi interaction**
-The astronaut starts interacting with Thoughts and Memories.
+**Phase 10 — Chibi interaction.** The astronaut starts reacting to and interacting with your work.
 
-**Phase 9 — Sharing & collaboration**
-Accounts, share a Memory, others tap in and add rebuttals.
+**Phase 11 — The Galaxy.** Accounts, publishing (immutable snapshots), rebuttals, the public sky. Re-evaluate vector/database infrastructure here.
 
 ---
 
 ## Open decisions to confirm
 
-1. How a Memory's circle grows (proposed: thoughts + connections count).
-2. Connection types — fixed starter set vs. custom (proposed: fixed starter set now, custom later).
-3. Whether the Memory "document view" is a written narrative you author on top of the Thoughts, or an auto-composed read of the Thoughts and their connections (proposed: auto-composed first, hand-editable later).
-
-*These are starting positions, not final calls. Adjust before Phase 1.*
+1. **Stardust** as the name for the staging inbox — keep or rename?
+2. **Pathway storage** — proposed: `pathways` table with auto-derived branches and overridable colors. Confirm the model feels right once we see it on canvas.
+3. **Rebuttal rules** in the Galaxy — can the original author *unpublish* (hide, not delete) their own work? Can rebuttals themselves be rebutted (they should be — chains of debate)? Decide at Phase 11, not now.
+4. **Document view ordering** — chronological by creation is the default; is created-order or connected-order the better "story of the study"? Try chronological first, revisit with real studies.

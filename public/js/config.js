@@ -16,6 +16,16 @@ const MindfulConfig = {
         fadeDistance: 0.15          // Fade connections at edges (0-1)
     },
 
+    // Canvas Zoom & Altitudes
+    zoom: {
+        min: 0.1,                   // Furthest out (10%) - deep in the constellation sky
+        max: 2.5,                   // Closest in (250%)
+        step: 1.25,                 // Factor per +/- button press
+        wheelSensitivity: 0.0015,   // Wheel delta -> zoom factor exponent
+        altitudeStart: 0.55,        // Below this zoom, cards begin fading into stars
+        altitudeFull: 0.35          // At/below this zoom, the constellation view is complete
+    },
+
     // Connection/String Configuration
     connections: {
         strokeWidth: 8,
@@ -110,6 +120,7 @@ const MindfulConfig = {
 Object.freeze(MindfulConfig);
 Object.freeze(MindfulConfig.grid);
 Object.freeze(MindfulConfig.panning);
+Object.freeze(MindfulConfig.zoom);
 Object.freeze(MindfulConfig.connections);
 Object.freeze(MindfulConfig.particles);
 Object.freeze(MindfulConfig.particles.core);

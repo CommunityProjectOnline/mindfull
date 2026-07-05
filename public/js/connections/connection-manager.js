@@ -198,7 +198,11 @@ const ConnectionManager = {
             return false;
         }
 
-        this.drawConnection(fromPort, toPort, typeObj, saved.id);
+        // The server may have born a new pathway (and a new Origin) for this connection.
+        if (saved.pathway && window.PathwayManager) PathwayManager.register(saved.pathway);
+        const pathway = window.PathwayManager ? PathwayManager.get(saved.pathwayId) : null;
+
+        this.drawConnection(fromPort, toPort, typeObj, saved.id, pathway);
 
         if (window.MindfulAudio) window.MindfulAudio.playSound('connect');
         console.log(`⚡ Connection created (${typeObj.name}): #${fromId} → #${toId}`);
@@ -208,10 +212,17 @@ const ConnectionManager = {
     /**
      * Draw a connection's SVG (line + light pulse + type badge) and register it in state.
      * Used both for freshly-created connections and for ones loaded from the database.
+     *
+     * The line and light pulse take the PATHWAY's branch color when the connection belongs
+     * to one; cross-links (no pathway) fall back to the connection-type color. The type
+     * badge at the midpoint always keeps the type's color and icon.
      * @returns {Object} the connection data object
      */
-    drawConnection(fromPort, toPort, typeObj, dbId) {
-        const rgb = typeObj.rgb;
+    drawConnection(fromPort, toPort, typeObj, dbId, pathway) {
+        const pathwayRgb = pathway && window.PathwayManager
+            ? PathwayManager.hexToRgbTriplet(pathway.color)
+            : null;
+        const rgb = pathwayRgb || typeObj.rgb;
         const fromPos = this.getPortPosition(fromPort);
         const toPos = this.getPortPosition(toPort);
         const cps = this.controlPointsFor(fromPos, toPos);
@@ -277,6 +288,7 @@ const ConnectionManager = {
             rgb,
             color: typeObj.color,
             icon: typeObj.icon,
+            pathwayId: pathway ? pathway.id : null,
             path,
             controlPoints: cps,
             trail,
@@ -295,7 +307,7 @@ const ConnectionManager = {
 
         label.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (confirm(`Remove this "${conn.type}" connection?`)) this.deleteConnection(conn);
+            this.showConnectionMenu(e.clientX, e.clientY, conn);
         });
 
         this.positionLabel(conn, fromPos, toPos, cps);
@@ -304,10 +316,13 @@ const ConnectionManager = {
     },
 
     /**
-     * Load all persisted connections and draw them (after Thought nodes exist in the DOM)
+     * Load all persisted pathways + connections and draw them (after Thought nodes exist)
      */
     async loadConnections() {
         AppState.getConnections().slice().forEach((c) => this.removeConnectionVisual(c));
+
+        // Pathways first: connections need their branch colors, and Origins get their glow.
+        if (window.PathwayManager) await PathwayManager.load();
 
         const conns = await ConnectionAPI.getAll();
         conns.forEach((c) => {
@@ -317,9 +332,103 @@ const ConnectionManager = {
 
             const ports = this.pickClosestPorts(fromNode, toNode);
             if (!ports) return;
-            this.drawConnection(ports.fromPort, ports.toPort, ConnectionTypes.byName(c.type), c.id);
+            const pathway = window.PathwayManager ? PathwayManager.get(c.pathwayId) : null;
+            this.drawConnection(ports.fromPort, ports.toPort, ConnectionTypes.byName(c.type), c.id, pathway);
         });
+
+        if (window.PathwayManager) PathwayManager.markOrigins();
         console.log('🔗 Loaded', conns.length, 'connections');
+    },
+
+    /**
+     * Small menu on a connection's type badge: shows the type, offers pathway color
+     * swatches (when the connection belongs to a branch), and delete.
+     */
+    showConnectionMenu(clientX, clientY, conn) {
+        if (this._activePickerCleanup) this._activePickerCleanup();
+
+        const menu = document.createElement('div');
+        menu.className = 'connection-type-picker';
+
+        const cleanup = () => {
+            menu.remove();
+            document.removeEventListener('mousedown', onOutside, true);
+            document.removeEventListener('keydown', onEsc, true);
+            if (this._activePickerCleanup === cleanup) this._activePickerCleanup = null;
+        };
+        const onOutside = (ev) => { if (!menu.contains(ev.target)) cleanup(); };
+        const onEsc = (ev) => { if (ev.key === 'Escape') cleanup(); };
+
+        const heading = document.createElement('div');
+        heading.className = 'connection-type-picker-title';
+        heading.innerHTML =
+            `<span class="conn-type-icon" style="color:${conn.color}">${conn.icon}</span> ${conn.type}`;
+        menu.appendChild(heading);
+
+        const pathway = window.PathwayManager ? PathwayManager.get(conn.pathwayId) : null;
+        if (pathway && PathwayManager.palette.length) {
+            const swatchTitle = document.createElement('div');
+            swatchTitle.className = 'connection-type-picker-title';
+            swatchTitle.textContent = 'Pathway color';
+            menu.appendChild(swatchTitle);
+
+            const row = document.createElement('div');
+            row.className = 'conn-swatch-row';
+            PathwayManager.palette.forEach((color) => {
+                const swatch = document.createElement('button');
+                swatch.type = 'button';
+                swatch.className = 'conn-swatch' + (color === pathway.color ? ' current' : '');
+                swatch.style.background = color;
+                swatch.title = color;
+                swatch.addEventListener('click', async (ev) => {
+                    ev.stopPropagation();
+                    cleanup();
+                    await PathwayManager.setColor(pathway.id, color);
+                });
+                row.appendChild(swatch);
+            });
+            menu.appendChild(row);
+        }
+
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'conn-type-option conn-menu-delete';
+        del.innerHTML = '<span class="conn-type-icon">🗑</span><span class="conn-type-name">Delete connection</span>';
+        del.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            cleanup();
+            if (confirm(`Remove this "${conn.type}" connection?`)) this.deleteConnection(conn);
+        });
+        menu.appendChild(del);
+
+        document.body.appendChild(menu);
+
+        // Keep the menu on-screen
+        const rect = menu.getBoundingClientRect();
+        let left = clientX;
+        let top = clientY;
+        if (left + rect.width > window.innerWidth - 8) left = window.innerWidth - rect.width - 8;
+        if (top + rect.height > window.innerHeight - 8) top = window.innerHeight - rect.height - 8;
+        menu.style.left = Math.max(8, left) + 'px';
+        menu.style.top = Math.max(8, top) + 'px';
+
+        this._activePickerCleanup = cleanup;
+        setTimeout(() => {
+            document.addEventListener('mousedown', onOutside, true);
+            document.addEventListener('keydown', onEsc, true);
+        }, 0);
+    },
+
+    /**
+     * Restyle a connection's line + pulse to a new branch color (pathway recolor).
+     */
+    restyleConnection(conn, color) {
+        const rgb = PathwayManager.hexToRgbTriplet(color);
+        if (!rgb) return;
+        conn.rgb = rgb; // the animator reads this every frame for the pulse + trail
+        conn.path.style.stroke = `rgba(${rgb}, 0.4)`;
+        conn.path.style.filter = `drop-shadow(0 0 5px rgba(${rgb}, 0.55))`;
+        conn.halo.setAttribute('fill', `rgba(${rgb}, 0.3)`);
     },
 
     /**
@@ -352,9 +461,10 @@ const ConnectionManager = {
      * Update all connection positions + labels (called when nodes move)
      */
     updateConnections() {
+        const alt = window.CanvasViewport ? CanvasViewport.altitude : 0;
         AppState.connections.forEach((conn) => {
-            const fromPos = this.getPortPosition(conn.fromPort);
-            const toPos = this.getPortPosition(conn.toPort);
+            const fromPos = this.endpointFor(conn.fromPort, alt);
+            const toPos = this.endpointFor(conn.toPort, alt);
             const cps = this.controlPointsFor(fromPos, toPos);
 
             conn.controlPoints = cps;
@@ -366,10 +476,12 @@ const ConnectionManager = {
     /* ---------- geometry helpers ---------- */
 
     // Convert viewport (client) coordinates into the SVG layer's own coordinate space, so
-    // pathways line up with ports regardless of the navbar offset or canvas panning.
+    // pathways line up with ports regardless of the navbar offset, canvas panning, or zoom.
+    // The SVG layer lives inside the scaled #world, so screen distances shrink by the zoom.
     toSvgPoint(clientX, clientY) {
         const r = AppState.svgLayer.getBoundingClientRect();
-        return { x: clientX - r.left, y: clientY - r.top };
+        const zoom = window.CanvasViewport ? CanvasViewport.zoom : 1;
+        return { x: (clientX - r.left) / zoom, y: (clientY - r.top) / zoom };
     },
 
     getPortPosition(port) {
@@ -377,14 +489,30 @@ const ConnectionManager = {
         return this.toSvgPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
     },
 
+    // A connection's endpoint: the port in the workspace, blending toward the card's
+    // center as the camera ascends - so constellation lines meet their stars exactly.
+    endpointFor(port, alt) {
+        const portPos = this.getPortPosition(port);
+        if (!alt) return portPos;
+        const node = port.parentElement;
+        const cx = node.offsetLeft + node.offsetWidth / 2;
+        const cy = node.offsetTop + node.offsetHeight / 2;
+        return {
+            x: portPos.x + (cx - portPos.x) * alt,
+            y: portPos.y + (cy - portPos.y) * alt
+        };
+    },
+
     controlPointsFor(fromPos, toPos) {
         const dx = toPos.x - fromPos.x;
         const dy = toPos.y - fromPos.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
+        // Curves straighten into classic star-map segments as the camera ascends.
+        const straighten = window.CanvasViewport ? 1 - CanvasViewport.altitude : 1;
         const curveOffset = Math.min(
             distance * MindfulConfig.connections.curveIntensity,
             MindfulConfig.connections.maxCurveOffset
-        );
+        ) * straighten;
         return {
             cp1x: fromPos.x + curveOffset,
             cp1y: fromPos.y,

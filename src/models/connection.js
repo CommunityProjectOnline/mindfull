@@ -4,6 +4,7 @@
 
 const db = require('../db/connection');
 const { recordEvent } = require('../lib/events');
+const Pathway = require('./pathway');
 
 const now = () => new Date().toISOString();
 
@@ -30,6 +31,7 @@ function serialize(row) {
         fromThoughtId: row.from_thought_id,
         toThoughtId: row.to_thought_id,
         type: row.type,
+        pathwayId: row.pathway_id, // null = a cross-link between branches
         created: row.created
     };
 }
@@ -54,7 +56,13 @@ const Connection = {
 
         const created = now();
         const info = stmts.insert.run({ from, to, type: type || 'Relates to', created });
+
+        // Branch assignment: the replay fills in this connection's pathway (creating a new
+        // pathway - and possibly a new Origin - when the rules call for one).
+        Pathway.assignUnassigned();
+
         const conn = serialize(stmts.byId.get(info.lastInsertRowid));
+        conn.pathway = conn.pathwayId != null ? Pathway.getById(conn.pathwayId) : null;
         recordEvent('connection.created', 'connection', conn.id, conn);
         return conn;
     },

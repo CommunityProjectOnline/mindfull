@@ -1,6 +1,8 @@
 /**
  * Canvas Panning Module
- * Handles infinite workspace panning with SHIFT+drag or middle mouse
+ * Handles infinite workspace panning. Pan by dragging empty canvas, holding SHIFT
+ * while dragging, or using the middle mouse button. The actual camera move is
+ * delegated to CanvasViewport, which owns the pan/zoom transform.
  */
 
 const CanvasPanning = {
@@ -14,13 +16,12 @@ const CanvasPanning = {
             return;
         }
 
-        // Start panning on middle mouse or SHIFT + left click
         constellation.addEventListener('mousedown', this.handleMouseDown.bind(this));
         document.addEventListener('mousemove', this.handleMouseMove.bind(this));
         document.addEventListener('mouseup', this.handleMouseUp.bind(this));
 
         console.log('✅ Canvas panning initialized');
-        console.log('🗺️ TIP: Hold SHIFT + drag or use middle mouse button to pan the canvas!');
+        console.log('🗺️ TIP: Drag empty space (or SHIFT+drag / middle mouse) to pan the canvas!');
     },
 
     /**
@@ -28,14 +29,15 @@ const CanvasPanning = {
      * @param {MouseEvent} e - Mouse event
      */
     handleMouseDown(e) {
-        // Middle mouse button (1) OR left click (0) + SHIFT
-        if (e.button === 1 || (e.button === 0 && e.shiftKey)) {
+        // Middle mouse, SHIFT + left click, or a plain left click on empty canvas
+        // (the constellation/world itself, not a Thought node or other UI).
+        const onEmptyCanvas = e.target === AppState.constellation || e.target === AppState.world;
+        if (e.button === 1 || (e.button === 0 && (e.shiftKey || onEmptyCanvas))) {
             e.preventDefault();
             AppState.isPanning = true;
             AppState.panStartX = e.clientX - AppState.panOffsetX;
             AppState.panStartY = e.clientY - AppState.panOffsetY;
             AppState.constellation.classList.add('panning');
-            console.log('🗺️ Panning Inner Space...');
         }
     },
 
@@ -47,16 +49,7 @@ const CanvasPanning = {
         if (!AppState.isPanning) return;
 
         e.preventDefault();
-        AppState.panOffsetX = e.clientX - AppState.panStartX;
-        AppState.panOffsetY = e.clientY - AppState.panStartY;
-
-        // Update grid background position
-        AppState.constellation.style.backgroundPosition =
-            `center, ${AppState.panOffsetX}px ${AppState.panOffsetY}px, ${AppState.panOffsetX}px ${AppState.panOffsetY}px, center, 0 0`;
-
-        // Move all content (nodes and connections) with the grid
-        AppState.constellation.style.transform =
-            `translate(${AppState.panOffsetX}px, ${AppState.panOffsetY}px)`;
+        CanvasViewport.setPan(e.clientX - AppState.panStartX, e.clientY - AppState.panStartY);
     },
 
     /**
@@ -67,7 +60,6 @@ const CanvasPanning = {
         if (AppState.isPanning) {
             AppState.resetPanning();
             AppState.constellation.classList.remove('panning');
-            console.log('✅ Pan complete');
         }
     }
 };

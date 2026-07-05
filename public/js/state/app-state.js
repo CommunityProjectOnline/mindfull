@@ -16,6 +16,9 @@ const AppState = {
     dragStartPort: null,
     tempConnectionLine: null,
 
+    // Focus mode (hover spotlight) - the Thought id under the spotlight, or null
+    focusThoughtId: null,
+
     // Canvas panning state
     isPanning: false,
     panStartX: 0,
@@ -25,6 +28,7 @@ const AppState = {
 
     // DOM References (initialized on load)
     constellation: null,
+    world: null,
     svgLayer: null,
 
     /**
@@ -32,9 +36,10 @@ const AppState = {
      */
     init() {
         this.constellation = document.getElementById('constellation');
+        this.world = document.getElementById('world');
         this.svgLayer = document.getElementById('connectionLayer');
 
-        if (!this.constellation || !this.svgLayer) {
+        if (!this.constellation || !this.world || !this.svgLayer) {
             console.error('❌ Failed to initialize AppState: Required DOM elements not found');
             return false;
         }
@@ -79,6 +84,8 @@ const AppState = {
      */
     addConnection(connection) {
         this.connections.push(connection);
+        // The main-branch/cross-link split shifts whenever the web changes.
+        if (window.ConnectionSkeleton) ConnectionSkeleton.scheduleRecompute();
     },
 
     /**
@@ -90,6 +97,7 @@ const AppState = {
         if (index > -1) {
             this.connections.splice(index, 1);
         }
+        if (window.ConnectionSkeleton) ConnectionSkeleton.scheduleRecompute();
     },
 
     /**

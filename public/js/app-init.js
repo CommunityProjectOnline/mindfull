@@ -17,12 +17,21 @@ const MindfulApp = {
             }
 
             // Initialize all modules
+            CanvasViewport.init();
             CanvasPanning.init();
             NodeDragging.init();
             ConnectionManager.init();
             ConnectionAnimator.init();
+            MemoryRenderer.init();
+            MemoryDocument.init();
+            MemoryManager.init();
+            StardustManager.init();
+            StarField.init();
+            RediscoveryPanel.init();
+            TimelinePlayer.init();
             AstronautController.init();
             Navigation.init();
+            FocusMode.init();
 
             console.log('✨ MindFull Application initialized successfully!');
             console.log('💡 Tips:');

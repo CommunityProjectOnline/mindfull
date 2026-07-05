@@ -1,0 +1,289 @@
+/* Stardust - the staging inbox: navbar button + badge, panel, capture form, import modal. */
+
+/* Navbar button */
+.stardust-btn {
+    position: relative;
+    background: linear-gradient(135deg, rgba(210, 153, 34, 0.75), rgba(118, 75, 162, 0.75));
+    border-color: rgba(255, 234, 167, 0.4);
+    box-shadow: 0 4px 12px rgba(210, 153, 34, 0.2);
+}
+
+.stardust-btn:hover {
+    background: linear-gradient(135deg, rgba(210, 153, 34, 0.95), rgba(118, 75, 162, 0.95));
+    border-color: rgba(255, 234, 167, 0.7);
+    box-shadow: 0 6px 20px rgba(210, 153, 34, 0.4);
+}
+
+.stardust-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ffeaa7, #f4d03f);
+    color: #2a2415;
+    font-size: 0.72em;
+    font-weight: 700;
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(255, 234, 167, 0.6);
+}
+
+.stardust-badge.hidden {
+    display: none;
+}
+
+/* Panel accents (inherits layout from .memories-panel) */
+.stardust-panel {
+    border-left-color: rgba(255, 234, 167, 0.25);
+}
+
+/* Quick capture form */
+.stardust-capture {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.15);
+}
+
+.stardust-capture input,
+.stardust-capture textarea,
+.stardust-capture select {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 234, 167, 0.25);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: #f0eadb;
+    font-size: 0.88em;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.stardust-capture input:focus,
+.stardust-capture textarea:focus,
+.stardust-capture select:focus {
+    outline: none;
+    border-color: rgba(255, 234, 167, 0.6);
+    box-shadow: 0 0 14px rgba(255, 234, 167, 0.15);
+}
+
+.stardust-capture-row {
+    display: flex;
+    gap: 8px;
+}
+
+.stardust-capture-row select {
+    flex: 1;
+}
+
+.stardust-capture-btn {
+    padding: 8px 18px;
+    font-size: 0.85em;
+}
+
+/* Import opener */
+.stardust-import-open {
+    margin: 10px 16px 4px;
+    padding: 10px;
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px dashed rgba(102, 126, 234, 0.4);
+    border-radius: 10px;
+    color: #b8c4ff;
+    font-size: 0.88em;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.stardust-import-open:hover {
+    background: rgba(102, 126, 234, 0.2);
+    border-style: solid;
+}
+
+/* Inbox list */
+.stardust-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stardust-empty {
+    color: #8a8aa5;
+    font-size: 0.88em;
+    line-height: 1.6;
+    padding: 22px 12px;
+    text-align: center;
+}
+
+.stardust-loose-title {
+    color: #8a8aa5;
+    font-size: 0.72em;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 8px 4px 0;
+}
+
+.stardust-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(255, 234, 167, 0.05);
+    border: 1px solid rgba(255, 234, 167, 0.15);
+    border-radius: 10px;
+    transition: all 0.15s ease;
+}
+
+.stardust-item:hover {
+    background: rgba(255, 234, 167, 0.1);
+    border-color: rgba(255, 234, 167, 0.35);
+}
+
+.stardust-item-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.stardust-item-title {
+    color: #f0eadb;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.stardust-item-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 3px;
+    min-width: 0;
+}
+
+.stardust-item-category {
+    color: #d4b96a;
+    font-size: 0.7em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+}
+
+.stardust-item-preview {
+    color: #8a8aa5;
+    font-size: 0.76em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stardust-item-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.stardust-place-btn,
+.stardust-discard-btn {
+    background: transparent;
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 7px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-size: 0.85em;
+    color: #b0b0c8;
+    transition: all 0.15s ease;
+}
+
+.stardust-place-btn:hover {
+    background: rgba(127, 209, 185, 0.2);
+    border-color: rgba(127, 209, 185, 0.6);
+}
+
+.stardust-discard-btn:hover {
+    background: rgba(234, 102, 102, 0.2);
+    border-color: rgba(234, 102, 102, 0.6);
+    color: #ffb3b3;
+}
+
+/* Import batches */
+.stardust-batch {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background: rgba(102, 126, 234, 0.06);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 12px;
+}
+
+.stardust-batch-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.stardust-batch-name {
+    color: #dfe4ff;
+    font-weight: 700;
+    font-size: 0.92em;
+}
+
+.stardust-batch-summary {
+    color: #9a9ab5;
+    font-size: 0.78em;
+    line-height: 1.45;
+    margin-top: 3px;
+}
+
+.stardust-batch-meta {
+    color: #7a7a93;
+    font-size: 0.72em;
+    margin-top: 4px;
+}
+
+.stardust-place-all {
+    padding: 7px 13px;
+    font-size: 0.8em;
+    flex-shrink: 0;
+}
+
+/* Import modal bits */
+.import-help {
+    color: #b8b8d1;
+    font-size: 0.88em;
+    line-height: 1.9;
+    margin: 0 0 16px;
+}
+
+.import-copy-prompt {
+    background: rgba(102, 126, 234, 0.15);
+    border: 1px solid rgba(102, 126, 234, 0.4);
+    border-radius: 8px;
+    color: #cdd6ff;
+    padding: 5px 12px;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.import-copy-prompt:hover {
+    background: rgba(102, 126, 234, 0.3);
+}
+
+#importJsonInput {
+    font-family: 'Courier New', monospace;
+    font-size: 0.82em;
+}
+
+.import-error {
+    color: #ff9d9d;
+    font-size: 0.85em;
+    min-height: 1.2em;
+    margin-bottom: 8px;
+}

@@ -18,12 +18,12 @@ router.get('/:id', (req, res) => {
 
 // POST /api/thoughts - create a Thought.
 router.post('/', (req, res) => {
-    const { title, category, shortcut, content, x, y, tags } = req.body;
+    const { title, category, shortcut, content, source, x, y, tags } = req.body;
     if (!title || !category) {
         return res.status(400).json({ error: 'Title and category are required' });
     }
     try {
-        const thought = Thought.create({ title, category, shortcut, content, x, y, tags });
+        const thought = Thought.create({ title, category, shortcut, content, source, x, y, tags });
         res.status(201).json(thought);
     } catch (err) {
         // Most likely a duplicate shortcut (UNIQUE constraint).

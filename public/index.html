@@ -18,6 +18,11 @@
         <link rel="stylesheet" href="css/astronaut.css">
         <link rel="stylesheet" href="css/settings.css">
         <link rel="stylesheet" href="css/connections.css">
+        <link rel="stylesheet" href="css/memories.css">
+        <link rel="stylesheet" href="css/stardust.css">
+        <link rel="stylesheet" href="css/sky.css">
+        <link rel="stylesheet" href="css/rediscovery.css">
+        <link rel="stylesheet" href="css/timeline.css">
     </head>
 
     <body>
@@ -28,15 +33,55 @@
                 <img src="assets/logo-constellation.svg" alt="MindFull Logo" class="navbar-logo">
                 <span class="navbar-title">MindFull</span>
             </div>
-            <button id="addThoughtBtn" class="add-thought-btn-navbar">
-                <svg viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                    <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/>
-                    <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                <span>Add Thought</span>
-            </button>
+            <div class="navbar-actions">
+                <button id="addThoughtBtn" class="add-thought-btn-navbar">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/>
+                        <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span>Add Thought</span>
+                </button>
+                <button id="createMemoryBtn" class="add-thought-btn-navbar new-memory-btn">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <circle cx="9" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="16" cy="14" r="3" stroke="currentColor" stroke-width="2"/>
+                        <path d="M4 14 Q3 7 9 4.5 Q17 2 20.5 8 Q23 13 19 18 Q14 22.5 8 20 Q4.5 18 4 14 Z"
+                              stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+                    </svg>
+                    <span>New Memory</span>
+                </button>
+                <button id="stardustBtn" class="add-thought-btn-navbar stardust-btn" title="Stardust - your staging inbox">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 3 L13.6 9.2 L19.5 10.5 L13.6 11.8 L12 18 L10.4 11.8 L4.5 10.5 L10.4 9.2 Z"
+                              stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                        <circle cx="18.5" cy="5" r="1" fill="currentColor"/>
+                        <circle cx="5.5" cy="17.5" r="1" fill="currentColor"/>
+                        <circle cx="19" cy="18" r="0.7" fill="currentColor"/>
+                    </svg>
+                    <span>Stardust</span>
+                    <span id="stardustCount" class="stardust-badge hidden">0</span>
+                </button>
+                <button id="rediscoveryBtn" class="add-thought-btn-navbar rediscovery-btn" title="Rediscovery — Thoughts that might belong together">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <circle cx="7" cy="7" r="2.4" stroke="currentColor" stroke-width="1.8"/>
+                        <circle cx="17" cy="17" r="2.4" stroke="currentColor" stroke-width="1.8"/>
+                        <path d="M9 9 L15 15" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.5,2.5"/>
+                        <path d="M18 4 l0.7 1.8 L20.5 6.5 l-1.8 0.7 L18 9 l-0.7 -1.8 L15.5 6.5 l1.8 -0.7 Z" fill="currentColor" opacity="0.85"/>
+                    </svg>
+                    <span id="rediscoveryCount" class="stardust-badge rediscovery-badge hidden">0</span>
+                </button>
+            </div>
         </nav>
+
+        <!-- Memory selection bar (shown while gathering Thoughts into a new Memory) -->
+        <div id="memoryBar" class="memory-bar hidden">
+            <span class="memory-bar-hint">🫧 Click Thoughts to include them — double-click grabs a whole cluster</span>
+            <input type="text" id="memoryNameInput" class="memory-bar-name" placeholder="Name this Memory..." maxlength="80">
+            <span id="memorySelCount" class="memory-bar-count">0 Thoughts</span>
+            <button id="memoryCreateConfirm" class="btn-primary memory-bar-btn">Create Memory</button>
+            <button id="memoryCancelBtn" class="btn-secondary memory-bar-btn">Cancel</button>
+        </div>
 
         <!-- Collapsible Sidebar Navigation -->
         <div id="sidebar" class="sidebar">
@@ -149,6 +194,11 @@
                         <textarea id="thoughtContent" rows="6" placeholder="Write your Thought here..."></textarea>
                     </div>
                     <div class="form-group">
+                        <label for="thoughtSource">Source</label>
+                        <input type="text" id="thoughtSource" placeholder="e.g., KJV — John 3:16, or author, work, page">
+                        <small>Optional. Where this came from — a citation, speaker, or link.</small>
+                    </div>
+                    <div class="form-group">
                         <label for="thoughtTags">Meta-words (tags)</label>
                         <input type="text" id="thoughtTags" placeholder="comma-separated, e.g. faith, love, grace">
                         <small>Optional. Separate with commas — tags help connect Thoughts later.</small>
@@ -221,31 +271,149 @@
             </div>
         </div>
 
+        <!-- Memories Panel (opened from the sidebar) -->
+        <div id="memoriesPanel" class="memories-panel hidden">
+            <div class="memories-panel-header">
+                <h2>🫧 Memories</h2>
+                <button id="closeMemoriesPanel" class="close-btn">×</button>
+            </div>
+            <div id="memoriesList" class="memories-list"></div>
+        </div>
+
+        <!-- Stardust Panel (staging inbox) -->
+        <div id="stardustPanel" class="memories-panel stardust-panel hidden">
+            <div class="memories-panel-header">
+                <h2>🌠 Stardust</h2>
+                <button id="closeStardustPanel" class="close-btn">×</button>
+            </div>
+            <form id="stardustCaptureForm" class="stardust-capture">
+                <input type="text" id="stardustTitle" placeholder="Quick capture — a title..." maxlength="120">
+                <textarea id="stardustContent" rows="2" placeholder="Optional: the thought itself..."></textarea>
+                <div class="stardust-capture-row">
+                    <select id="stardustCategory">
+                        <option value="Note">📝 Note</option>
+                        <option value="Scripture">📖 Scripture</option>
+                        <option value="Prayer">🙏 Prayer</option>
+                        <option value="Quote">💭 Quote</option>
+                        <option value="Idea">💡 Idea</option>
+                        <option value="Question">❓ Question</option>
+                        <option value="Goal">🎯 Goal</option>
+                        <option value="Recipe">🍳 Recipe</option>
+                    </select>
+                    <button type="submit" class="btn-primary stardust-capture-btn">Capture</button>
+                </div>
+            </form>
+            <button id="openImportBtn" class="stardust-import-open">📥 Import from AI...</button>
+            <div id="stardustList" class="stardust-list"></div>
+        </div>
+
+        <!-- Timeline Overlay (the Big Bang replay) -->
+        <div id="timelineOverlay" class="timeline-overlay hidden">
+            <div class="timeline-header">
+                <h2>🕐 Timeline — from the Big Bang</h2>
+                <button id="closeTimeline" class="close-btn">×</button>
+            </div>
+            <svg id="timelineSvg" class="timeline-svg"></svg>
+            <div id="timelineTicker" class="timeline-ticker"></div>
+            <div class="timeline-controls">
+                <button id="timelinePlayBtn" class="timeline-btn" title="Play / pause">▶</button>
+                <button id="timelineSpeedBtn" class="timeline-btn timeline-speed" title="Playback speed">1×</button>
+                <input type="range" id="timelineScrubber" min="0" max="0" value="0" step="1">
+                <span id="timelineDate" class="timeline-date"></span>
+                <span id="timelineCounter" class="timeline-counter"></span>
+            </div>
+        </div>
+
+        <!-- Rediscovery Panel (suggested connections) -->
+        <div id="rediscoveryPanel" class="memories-panel rediscovery-panel hidden">
+            <div class="memories-panel-header">
+                <h2>💫 Rediscovery</h2>
+                <button id="closeRediscoveryPanel" class="close-btn">×</button>
+            </div>
+            <div class="rediscovery-intro">Thoughts that aren't connected — but probably should be.</div>
+            <div id="rediscoveryList" class="rediscovery-list"></div>
+        </div>
+
+        <!-- Stardust Import Modal -->
+        <div id="stardustImportModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>📥 Import from AI</h2>
+                    <button id="closeImportModal" class="close-btn">×</button>
+                </div>
+                <p class="import-help">
+                    1. <button id="copyPromptBtn" class="import-copy-prompt" type="button">📋 Copy the extraction prompt</button>
+                    &nbsp;2. Paste it into Claude along with your paper, article, or transcript.
+                    &nbsp;3. Paste the JSON it returns below — the Thoughts land here in Stardust for your review.
+                </p>
+                <div class="form-group">
+                    <textarea id="importJsonInput" rows="12" placeholder='{ "suggestedMemoryName": "...", "thoughts": [...], "connections": [...] }'></textarea>
+                </div>
+                <div id="importError" class="import-error"></div>
+                <div class="form-actions">
+                    <button type="button" id="cancelImportBtn" class="btn-secondary">Cancel</button>
+                    <button type="button" id="confirmImportBtn" class="btn-primary">Import to Stardust</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Memory Document ("white paper") Modal -->
+        <div id="memoryDocModal" class="modal hidden">
+            <div class="modal-content memory-doc-content">
+                <div class="memory-doc-header">
+                    <input type="text" id="memoryDocTitle" class="memory-doc-title" maxlength="80" title="Click to rename">
+                    <div class="memory-doc-actions no-print">
+                        <button id="arrangeMemoryBtn" class="btn-secondary" title="Re-lay this Memory out as a formation: Origin on the left, branches fanning right">✨ Arrange</button>
+                        <button id="printMemoryBtn" class="btn-secondary" title="Print this Memory">🖨 Print</button>
+                        <button id="deleteMemoryBtn" class="btn-secondary memory-doc-delete" title="Delete this Memory">Delete</button>
+                        <button id="closeMemoryDoc" class="close-btn">×</button>
+                    </div>
+                </div>
+                <div id="memoryDocMeta" class="memory-doc-meta"></div>
+                <div id="memoryDocBody" class="memory-doc-body"></div>
+            </div>
+        </div>
+
         <!-- Inner Space - Grid workspace for floating Memories -->
         <div id="constellation" class="constellation">
 
-            <!-- SVG Layer for String connections -->
-            <svg id="connectionLayer" class="connection-layer">
-                <defs>
-                    <!-- Pulsing gradient definition -->
-                    <linearGradient id="pulseGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="rgba(102, 126, 234, 0)" />
-                        <stop offset="20%" stop-color="rgba(102, 126, 234, 0.4)" />
-                        <stop offset="40%" stop-color="rgba(102, 126, 234, 0.8)" />
-                        <stop offset="50%" stop-color="rgba(255, 255, 255, 1)" />
-                        <stop offset="60%" stop-color="rgba(102, 126, 234, 0.8)" />
-                        <stop offset="80%" stop-color="rgba(102, 126, 234, 0.4)" />
-                        <stop offset="100%" stop-color="rgba(102, 126, 234, 0)" />
+            <!-- Background dust: faint parallax stars, purely decorative -->
+            <canvas id="dustLayer" class="dust-layer"></canvas>
 
-                        <!-- Animate the gradient along the line -->
-                        <animate attributeName="x1" values="-50%;150%" dur="2s" repeatCount="indefinite" />
-                        <animate attributeName="x2" values="50%;250%" dur="2s" repeatCount="indefinite" />
-                    </linearGradient>
-                </defs>
-            </svg>
+            <!-- The world: everything inside pans and zooms as one (the camera transform) -->
+            <div id="world" class="world">
 
-            <!-- Thought nodes are rendered here from the database by thought-manager.js -->
+                <!-- SVG Layer for String connections -->
+                <svg id="connectionLayer" class="connection-layer">
+                    <defs>
+                        <!-- Pulsing gradient definition -->
+                        <linearGradient id="pulseGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="rgba(102, 126, 234, 0)" />
+                            <stop offset="20%" stop-color="rgba(102, 126, 234, 0.4)" />
+                            <stop offset="40%" stop-color="rgba(102, 126, 234, 0.8)" />
+                            <stop offset="50%" stop-color="rgba(255, 255, 255, 1)" />
+                            <stop offset="60%" stop-color="rgba(102, 126, 234, 0.8)" />
+                            <stop offset="80%" stop-color="rgba(102, 126, 234, 0.4)" />
+                            <stop offset="100%" stop-color="rgba(102, 126, 234, 0)" />
 
+                            <!-- Animate the gradient along the line -->
+                            <animate attributeName="x1" values="-50%;150%" dur="2s" repeatCount="indefinite" />
+                            <animate attributeName="x2" values="50%;250%" dur="2s" repeatCount="indefinite" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+
+                <!-- Thought nodes are rendered here from the database by thought-manager.js -->
+
+            </div>
+
+        </div>
+
+        <!-- Zoom Controls -->
+        <div id="zoomControls" class="zoom-controls">
+            <button id="zoomOutBtn" class="zoom-btn" title="Zoom out">−</button>
+            <button id="zoomResetBtn" class="zoom-level" title="Reset zoom">100%</button>
+            <button id="zoomInBtn" class="zoom-btn" title="Zoom in">+</button>
         </div>
 
         <!-- Audio Mute Button -->
@@ -259,6 +427,7 @@
         <!-- JavaScript -->
         <!-- Configuration -->
         <script src="js/config.js"></script>
+        <script src="js/category-colors.js"></script>
 
         <!-- API & Audio -->
         <script src="js/api.js"></script>
@@ -268,17 +437,38 @@
         <script src="js/state/app-state.js"></script>
 
         <!-- Canvas Modules -->
+        <script src="js/canvas/viewport.js"></script>
         <script src="js/canvas/panning.js"></script>
         <script src="js/canvas/dragging.js"></script>
 
         <!-- Connection Modules -->
         <script src="js/connections/connection-types.js"></script>
+        <script src="js/connections/pathway-manager.js"></script>
         <script src="js/connections/connection-manager.js"></script>
+        <script src="js/connections/connection-skeleton.js"></script>
         <script src="js/connections/connection-animator.js"></script>
+
+        <!-- Memory Modules -->
+        <script src="js/memories/memory-renderer.js"></script>
+        <script src="js/memories/memory-document.js"></script>
+        <script src="js/memories/memory-manager.js"></script>
+
+        <!-- Stardust (staging inbox) -->
+        <script src="js/stardust/stardust-manager.js"></script>
+
+        <!-- Constellation altitude (stars at zoom-out) -->
+        <script src="js/constellation/star-field.js"></script>
+
+        <!-- Rediscovery (suggested connections) -->
+        <script src="js/rediscovery/rediscovery-panel.js"></script>
+
+        <!-- Timeline (the Big Bang replay) -->
+        <script src="js/timeline/timeline-player.js"></script>
 
         <!-- UI Modules -->
         <script src="js/ui/astronaut-controller.js"></script>
         <script src="js/ui/navigation.js"></script>
+        <script src="js/ui/focus-mode.js"></script>
 
         <!-- Thought Management -->
         <script src="js/thought-manager.js"></script>

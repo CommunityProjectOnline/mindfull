@@ -4,6 +4,7 @@
 
 const db = require('../db/connection');
 const { recordEvent } = require('../lib/events');
+const Layout = require('../lib/layout');
 const Tag = require('./tag');
 
 const now = () => new Date().toISOString();
@@ -17,8 +18,8 @@ const normalizeShortcut = (s) => {
 
 const statements = {
     insert: db.prepare(
-        `INSERT INTO thoughts (title, category, shortcut, content, x, y, created, updated, last_touched)
-         VALUES (@title, @category, @shortcut, @content, @x, @y, @created, @updated, @last_touched)`
+        `INSERT INTO thoughts (title, category, shortcut, content, source, x, y, created, updated, last_touched)
+         VALUES (@title, @category, @shortcut, @content, @source, @x, @y, @created, @updated, @last_touched)`
     ),
     byId: db.prepare(`SELECT * FROM thoughts WHERE id = ?`),
     all: db.prepare(`SELECT * FROM thoughts ORDER BY created ASC`),
@@ -40,6 +41,7 @@ function serialize(row) {
         category: row.category,
         shortcut: row.shortcut,
         content: row.content,
+        source: row.source,
         x: row.x,
         y: row.y,
         created: row.created,
@@ -63,15 +65,18 @@ const Thought = {
         return thought;
     },
 
-    create({ title, category, shortcut, content, x, y, tags }) {
+    create({ title, category, shortcut, content, source, x, y, tags }) {
         const ts = now();
+        // Never land on top of an existing card - nudge to the nearest clear ground.
+        const spot = Layout.findFreeSpot(x != null ? x : 100, y != null ? y : 100);
         const info = statements.insert.run({
             title,
             category,
             shortcut: normalizeShortcut(shortcut),
             content: content || '',
-            x: x != null ? x : 100,
-            y: y != null ? y : 100,
+            source: source || null,
+            x: spot.x,
+            y: spot.y,
             created: ts,
             updated: ts,
             last_touched: ts
@@ -88,7 +93,7 @@ const Thought = {
         const existing = statements.byId.get(id);
         if (!existing) return null;
 
-        const contentColumns = ['title', 'category', 'shortcut', 'content'];
+        const contentColumns = ['title', 'category', 'shortcut', 'content', 'source'];
         const allColumns = [...contentColumns, 'x', 'y'];
         const sets = [];
         const params = { id, updated: now(), last_touched: now() };
